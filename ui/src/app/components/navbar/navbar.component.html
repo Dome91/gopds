@@ -1,0 +1,19 @@
+<nav class="navbar navbar-expand navbar-dark mb-3">
+  <a class="navbar-brand" id="brand-link" routerLink="/catalog">GOPDS</a>
+  <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
+          class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse" type="button">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" id="catalog-link" routerLink="/catalog" routerLinkActive="active-link">Catalog</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="settings-link" routerLink="/settings" routerLinkActive="active-link">Settings</a>
+      </li>
+    </ul>
+    <button (click)="logout()" class="btn btn-info">Logout</button>
+  </div>
+</nav>

@@ -1,0 +1,48 @@
+<app-navbar></app-navbar>
+<div class="full-viewport-with-navbar">
+  <div class="card w-75">
+    <div class="card-body">
+      <div class="card-title">
+        <h5>Create User</h5>
+      </div>
+
+      <form>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input #usernameInput="ngModel" [(ngModel)]="user.username"
+                 [ngClass]="{'is-invalid': usernameInput.invalid && (usernameInput.dirty || usernameInput.touched)}"
+                 class="form-control" id="username" name="nameInput" required type="text">
+          <div *ngIf="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched)"
+               class="invalid-feedback d-block">
+            Username required.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input #passwordInput="ngModel" [(ngModel)]="user.password"
+                 [ngClass]="{'is-invalid': passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)}"
+                 class="form-control" id="password" name="pathInput"
+                 required type="text">
+          <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)"
+               class="invalid-feedback d-block">
+            Password required.
+          </div>
+        </div>
+        <div class="form-group d-flex flex-column">
+          <label for="role">Role</label>
+          <div ngbDropdown class="d-inline-block" id="role">
+            <button class="btn btn-outline-primary" id="roleDropdown" ngbDropdownToggle>{{user.role | titlecase}}</button>
+            <div ngbDropdownMenu>
+              <button ngbDropdownItem (click)="user.role = Role.USER">User</button>
+              <button ngbDropdownItem (click)="user.role = Role.ADMIN" id="dropdownAdminButton">Admin</button>
+            </div>
+          </div>
+        </div>
+
+        <button (click)="create()" class="btn-lg btn-block btn-primary" id="createButton" type="submit">
+          Create
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

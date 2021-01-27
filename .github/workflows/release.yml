@@ -1,0 +1,136 @@
+on:
+  push:
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Create Release Draft
+
+jobs:
+  build-ui:
+    name: Build UI
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 15.x ]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Cache node modules
+        id: cache-node
+        uses: actions/cache@v2
+        with:
+          path: ui/node_modules
+          key: ${{ runner.os }}-node-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        if: steps.cache-node.outputs.cache-hit != 'true'
+        run: cd ui && npm install
+
+      - name: Build
+        run: cd ui && npm run build -- --prod --output-path=../public
+
+      - name: Upload UI artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: public
+          path: public
+
+  build-app:
+    name: Build App
+    runs-on: ubuntu-latest
+    needs: [ build-ui ]
+    strategy:
+      matrix:
+        go-version: [ 1.15.x ]
+        platform: [ linux-armv6, linux-amd64 ]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Cache go modules
+        id: cache-go
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ secrets.CACHE_VERSION }}-${{ hashFiles('**/go.sum') }}
+
+      - name: Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go-version }}
+
+      - name: Download UI artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: public
+
+      - name: Install dependencies
+        if: steps.cache-go.outputs.cache-hit != 'true'
+        run: go get -v -t -d ./...
+
+      - name: Generate
+        run: |
+          go get -v github.com/golang/mock/mockgen@v1.4.4
+          go generate ./...
+
+      - name: Build ${{ matrix.platform }}
+        run: |
+          sudo apt-get -qq -o=Dpkg::Use-Pty=0 install gcc-arm-linux-gnueabi
+          make ${{ matrix.platform }}
+
+      - name: Upload ${{ matrix.platform }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: gopds-${{ matrix.platform }}
+          path: |
+            gopds-${{ matrix.platform }}
+            migrations
+            public
+
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create-release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+          prerelease: false
+
+  upload-release-assets:
+    name: Upload Release Assets
+    runs-on: ubuntu-latest
+    needs: [ build-app,create-release ]
+    strategy:
+      matrix:
+        asset: [ gopds-linux-armv6, gopds-linux-amd64 ]
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: ${{ matrix.asset }}
+
+      - name: Bundle assets
+        run: zip -r ${{matrix.asset}}.zip ${{matrix.asset}} public migrations
+
+      - name: Upload
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./${{matrix.asset}}.zip
+          asset_name: ${{matrix.asset}}.zip
+          asset_content_type: application/zip
+
+

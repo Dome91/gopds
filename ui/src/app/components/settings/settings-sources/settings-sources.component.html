@@ -1,0 +1,22 @@
+<div *ngIf="sources.length > 0; else noSource" class="list-group">
+  <div *ngFor="let source of sources"
+       class="list-group-item flex-column align-items-start">
+    <div class="d-flex w-100 justify-content-between align-items-center source-{{source.id}}">
+      <h5 class="mb-0">{{source.name}}</h5>
+      <div>
+        <button (click)="sync(source.id)" class="btn btn-primary mr-2" id="sync-{{source.id}}" type="button">
+          <fa-icon [icon]="faSync" [spin]="shouldSpin(source.id)" class="fa-lg"></fa-icon>
+        </button>
+        <button (click)="delete(source.id)" class="btn btn-danger" id="delete-{{source.id}}" type="button">
+          <fa-icon [icon]="faTrash" class="fa-lg"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noSource>
+  <div class="no-source-text">
+    <h5>No Sources added.</h5>
+  </div>
+</ng-template>

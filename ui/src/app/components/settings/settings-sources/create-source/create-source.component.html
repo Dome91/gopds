@@ -1,0 +1,38 @@
+<app-navbar></app-navbar>
+<div class="full-viewport-with-navbar">
+  <div class="card w-75">
+    <div class="card-body">
+      <div class="card-title">
+        <h5>Create Source</h5>
+      </div>
+
+      <form>
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input #nameInput="ngModel" [(ngModel)]="source.name"
+                 [ngClass]="{'is-invalid': nameInput.invalid && (nameInput.dirty || nameInput.touched)}"
+                 class="form-control" id="name" name="nameInput" required type="text">
+          <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)"
+               class="invalid-feedback d-block">
+            Name required.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="path">Path</label>
+          <input #pathInput="ngModel" [(ngModel)]="source.path"
+                 [ngClass]="{'is-invalid': pathInput.invalid && (pathInput.dirty || pathInput.touched)}"
+                 class="form-control" id="path" name="pathInput"
+                 required type="text">
+          <div *ngIf="pathInput.invalid && (pathInput.dirty || pathInput.touched)"
+               class="invalid-feedback d-block">
+            Path required.
+          </div>
+        </div>
+
+        <button (click)="create()" class="btn-lg btn-block btn-primary" id="createButton" type="submit">
+          Create
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

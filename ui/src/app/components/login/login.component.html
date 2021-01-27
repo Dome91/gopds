@@ -1,0 +1,31 @@
+<div class="full-viewport">
+  <div class="card">
+    <div class="card-body">
+      <form>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input #usernameInput="ngModel" [(ngModel)]="username"
+                 [ngClass]="{'is-invalid': usernameInput.invalid && (usernameInput.dirty || usernameInput.touched)}"
+                 aria-describedby="usernameHelp" class="form-control" id="username"
+                 name="usernameInput" required type="text">
+          <div *ngIf="usernameInput.invalid && (usernameInput.dirty || usernameInput.touched)"
+               class="invalid-feedback d-block">
+            Username required.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input #passwordInput="ngModel" [(ngModel)]="password"
+                 [ngClass]="{'is-invalid': passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)}"
+                 class="form-control" id="password" name="passwordInput"
+                 required type="password">
+          <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)"
+               class="invalid-feedback d-block">
+            Password required.
+          </div>
+        </div>
+        <button (click)="login()" class="btn-block btn-primary" id="loginButton" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
