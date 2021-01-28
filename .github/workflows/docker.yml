@@ -1,0 +1,34 @@
+on:
+  release:
+    types:
+      - published
+
+name: Build and Publish Docker Image
+
+jobs:
+  build-and-publish-docker-image:
+    name: Build and Publish Docker Image
+    runs-on: ubuntu-latest
+    needs: [ upload-release-assets ]
+    steps:
+      - name: Checkout ${{ env.GITHUB_REF }}
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.GITHUB_REF }}
+
+      - uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Set Release Version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Build docker image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gopds:latest,${{ secrets.DOCKERHUB_USERNAME }}/gopds:${{ env.RELEASE_VERSION }}
