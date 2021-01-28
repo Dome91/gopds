@@ -1,13 +1,16 @@
 package configuration
 
-import "os"
+import (
+	"os"
+	"path/filepath"
+)
 
 const environmentKey = "ENV"
 const environmentDevelopment = "DEV"
 const migrationsKey = "MIGRATIONS"
 const migrationsDefault = "migrations"
 const databaseKey = "DB"
-const databaseDefault = "./gopds.db"
+const databaseDefault = "data/gopds.db"
 
 func IsDevelopment() bool {
 	env := os.Getenv(environmentKey)
@@ -24,10 +27,19 @@ func GetMigrationsPath() string {
 }
 
 func GetDatabasePath() string {
+	createDataDirectory()
 	db := os.Getenv(databaseKey)
 	if db == "" {
 		return databaseDefault
 	}
 
 	return db
+}
+
+func createDataDirectory() {
+	dataPath := filepath.Join(".", "data")
+	err := os.MkdirAll(dataPath, os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
 }
