@@ -152,5 +152,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: Dome91/gopds:latest,Dome91/gopds:${{ env.RELEASE_VERSION }}
+          tags: dome91/gopds:latest,dome91/gopds:${{ env.RELEASE_VERSION }}
 
