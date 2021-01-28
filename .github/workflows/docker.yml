@@ -9,7 +9,7 @@ jobs:
     name: Build and Publish Docker Image
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout ${{ env.GITHUB_REF }}
+      - name: Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ env.GITHUB_REF }}
