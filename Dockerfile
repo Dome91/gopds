@@ -5,7 +5,7 @@ COPY . .
 RUN cd ui && npm install
 RUN cd ui && npm run build -- --prod --output-path=../public
 
-FROM golang:1.15 AS builder
+FROM golang:1.15 AS app-builder
 
 WORKDIR /gopds
 COPY . .
@@ -16,7 +16,7 @@ RUN CGO_ENABLED=1 go build -ldflags="-extldflags=-static" -tags sqlite_omit_load
 
 FROM scratch
 
-COPY --from=builder /gopds/gopds /gopds
+COPY --from=app-builder /gopds/gopds /gopds
 COPY --from=ui-builder /gopds/public /public
-COPY --from=builder /gopds/migrations /migrations
+COPY --from=app-builder /gopds/migrations /migrations
 ENTRYPOINT ["/gopds"]
