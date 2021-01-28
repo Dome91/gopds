@@ -77,9 +77,12 @@ jobs:
           go get -v github.com/golang/mock/mockgen@v1.4.4
           go generate ./...
 
+      - name: Install ARM GCC
+        if: matrix.platform == 'linux-armv6'
+        run: sudo apt-get -qq -o=Dpkg::Use-Pty=0 install gcc-arm-linux-gnueabi
+
       - name: Build ${{ matrix.platform }}
         run: |
-          sudo apt-get -qq -o=Dpkg::Use-Pty=0 install gcc-arm-linux-gnueabi
           make ${{ matrix.platform }}
 
       - name: Upload ${{ matrix.platform }}
