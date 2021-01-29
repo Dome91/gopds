@@ -1,15 +1,12 @@
 package services
 
 import (
-	"errors"
 	log "github.com/sirupsen/logrus"
 	"gopds/domain"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 )
-
-var ErrUnsupportedFiletype = errors.New("unsupported filetype")
 
 type SynchronizeCatalog func(sourceID string) error
 
@@ -70,22 +67,10 @@ func processDirectoryCatalogEntry(info os.FileInfo, path string) (domain.Catalog
 }
 
 func processFileCatalogEntry(info os.FileInfo, path string) (domain.CatalogEntry, error) {
-	catalogEntryType, err := checkType(path)
+	catalogEntryType, err := domain.DetermineCatalogEntryType(path)
 	if err != nil {
 		return domain.CatalogEntry{}, err
 	}
 
 	return domain.CatalogEntry{Name: info.Name(), Path: path, IsDirectory: false, Children: nil, Type: catalogEntryType}, nil
-}
-
-func checkType(path string) (domain.CatalogEntryType, error) {
-	ext := filepath.Ext(path)
-	switch ext {
-	case ".cbz":
-		return domain.CBZ, nil
-	case ".epub":
-		return domain.EPUB, nil
-	default:
-		return "", ErrUnsupportedFiletype
-	}
 }

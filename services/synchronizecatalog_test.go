@@ -10,10 +10,25 @@ import (
 )
 
 func TestSynchronizeCatalog(t *testing.T) {
+	path, err := filepath.Abs("../test")
+	assert.Nil(t, err)
+
+	southEpub := domain.CatalogEntry{Name: "South.epub", Path: filepath.Join(path, "ebooks", "epub", "South.epub"), IsDirectory: false, Type: domain.EPUB, Children: []domain.CatalogEntry(nil)}
+	lordJimEpub := domain.CatalogEntry{Name: "Lord Jim.epub", Path: filepath.Join(path, "ebooks", "epub", "Lord Jim.epub"), IsDirectory: false, Type: domain.EPUB, Children: []domain.CatalogEntry(nil)}
+	epub := domain.CatalogEntry{Name: "epub", Path: filepath.Join(path, "ebooks", "epub"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{lordJimEpub, southEpub}}
+	lordJimAzw3 := domain.CatalogEntry{Name: "Lord Jim.azw3", Path: filepath.Join(path, "ebooks", "azw3", "Lord Jim.azw3"), IsDirectory: false, Type: domain.AZW3, Children: []domain.CatalogEntry(nil)}
+	azw3 := domain.CatalogEntry{Name: "azw3", Path: filepath.Join(path, "ebooks", "azw3"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{lordJimAzw3}}
+	ebooks := domain.CatalogEntry{Name: "ebooks", Path: filepath.Join(path, "ebooks"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{azw3, epub}}
+
+	cbr := domain.CatalogEntry{Name: "cbr", Path: filepath.Join(path, "comics", "cbr"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry(nil)}
+	comic1 := domain.CatalogEntry{Name: "comic1.cbz", Path: filepath.Join(path, "comics", "cbz", "comic1.cbz"), IsDirectory: false, Type: domain.CBZ, Children: []domain.CatalogEntry(nil)}
+	cbz := domain.CatalogEntry{Name: "cbz", Path: filepath.Join(path, "comics", "cbz"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{comic1}}
+	comics := domain.CatalogEntry{Name: "comics", Path: filepath.Join(path, "comics"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{cbr, cbz}}
+
+	root := domain.CatalogEntry{Name: "test", Path: path, IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{comics, ebooks}}
+
 	withMock(t, func(controller *gomock.Controller) {
 		sourceID := "sourceID"
-		path, err := filepath.Abs("../test")
-		assert.Nil(t, err)
 
 		sourceRepository := mock_domain.NewMockSourceRepository(controller)
 		catalogRepository := mock_domain.NewMockCatalogRepository(controller)
@@ -21,48 +36,7 @@ func TestSynchronizeCatalog(t *testing.T) {
 		sourceRepository.EXPECT().FindByID(sourceID).Return(domain.Source{ID: sourceID, Path: path}, nil)
 		catalogRepository.EXPECT().Save(gomock.Any()).DoAndReturn(func(catalog domain.Catalog) error {
 			assert.Equal(t, sourceID, catalog.SourceID)
-
-			root := catalog.Root
-			assert.Equal(t, path, root.Path)
-			assert.Equal(t, "test", root.Name)
-			assert.True(t, root.IsDirectory)
-			assert.Equal(t, domain.DIRECTORY, root.Type)
-			assert.Len(t, root.Children, 1)
-
-			ebooks := root.Children[0]
-			assert.Equal(t, filepath.Join(path, "ebooks"), ebooks.Path)
-			assert.Equal(t, "ebooks", ebooks.Name)
-			assert.True(t, ebooks.IsDirectory)
-			assert.Equal(t, domain.DIRECTORY, ebooks.Type)
-			assert.Len(t, ebooks.Children, 2)
-
-			category1 := ebooks.Children[0]
-			assert.Equal(t, filepath.Join(path, "ebooks", "category1"), category1.Path)
-			assert.Equal(t, "category1", category1.Name)
-			assert.True(t, category1.IsDirectory)
-			assert.Equal(t, domain.DIRECTORY, category1.Type)
-			assert.Len(t, category1.Children, 1)
-
-			penguinIsland := category1.Children[0]
-			assert.Equal(t, filepath.Join(path, "ebooks", "category1", "Penguin Island.epub"), penguinIsland.Path)
-			assert.Equal(t, "Penguin Island.epub", penguinIsland.Name)
-			assert.False(t, penguinIsland.IsDirectory)
-			assert.Equal(t, domain.EPUB, penguinIsland.Type)
-			assert.Len(t, penguinIsland.Children, 0)
-
-			category2 := ebooks.Children[1]
-			assert.Equal(t, filepath.Join(path, "ebooks", "category2"), category2.Path)
-			assert.Equal(t, "category2", category2.Name)
-			assert.True(t, category2.IsDirectory)
-			assert.Equal(t, domain.DIRECTORY, category2.Type)
-			assert.Len(t, category2.Children, 1)
-
-			south := category2.Children[0]
-			assert.Equal(t, filepath.Join(path, "ebooks", "category2", "South.epub"), south.Path)
-			assert.Equal(t, "South.epub", south.Name)
-			assert.False(t, south.IsDirectory)
-			assert.Equal(t, domain.EPUB, south.Type)
-			assert.Len(t, south.Children, 0)
+			assert.Equal(t, root, catalog.Root)
 			return nil
 		})
 

@@ -1,13 +1,33 @@
 package domain
 
+import (
+	"errors"
+	"path/filepath"
+)
+
 //go:generate mockgen -destination=../mock/domain/catalog.go -source=catalog.go
 
 type CatalogEntryType string
+type CatalogEntryTypeAnalyzer func(path string) CatalogEntryType
 
 const (
 	DIRECTORY CatalogEntryType = ""
 	EPUB      CatalogEntryType = "application/epub+zip"
 	CBZ       CatalogEntryType = "application/vnd.comicbook+zip"
+	CBR       CatalogEntryType = "application/vnd.comicbook+rar"
+	AZW3      CatalogEntryType = "application/vnd.amazon.ebook"
+	MOBI      CatalogEntryType = "application/x-mobipocket-ebook"
+)
+
+var (
+	ErrUnsupportedFiletype = errors.New("unsupported filetype")
+	analyzers              = [...]CatalogEntryTypeAnalyzer{
+		catalogEntryTypeAnalyzerProvider(".cbz", CBZ),
+		catalogEntryTypeAnalyzerProvider(".cbr", CBR),
+		catalogEntryTypeAnalyzerProvider(".epub", EPUB),
+		catalogEntryTypeAnalyzerProvider(".mobi", MOBI),
+		catalogEntryTypeAnalyzerProvider(".azw3", AZW3),
+	}
 )
 
 type Catalog struct {
@@ -31,4 +51,26 @@ type CatalogRepository interface {
 	FindAllRoots() ([]CatalogEntry, error)
 	FindAllFiles() ([]CatalogEntry, error)
 	FindAllByParentCatalogEntryID(parentCatalogEntryID string) ([]CatalogEntry, error)
+}
+
+func catalogEntryTypeAnalyzerProvider(extension string, entryType CatalogEntryType) CatalogEntryTypeAnalyzer {
+	return func(path string) CatalogEntryType {
+		ext := filepath.Ext(path)
+		if ext == extension {
+			return entryType
+		}
+
+		return ""
+	}
+}
+
+func DetermineCatalogEntryType(path string) (CatalogEntryType, error) {
+	for _, analyzer := range analyzers {
+		entryType := analyzer(path)
+		if entryType != "" {
+			return entryType, nil
+		}
+	}
+
+	return "", ErrUnsupportedFiletype
 }
