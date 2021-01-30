@@ -58,7 +58,6 @@ export class CatalogComponent implements OnInit {
   }
 
   navigateToCatalogEntry(id: string) {
-    this.router.navigateByUrl(`catalog?id=${id}`, {
-    });
+    this.router.navigateByUrl(`catalog?id=${id}`);
   }
 }
