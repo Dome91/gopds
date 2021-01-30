@@ -35,9 +35,9 @@ func (m *MockCatalogRepository) EXPECT() *MockCatalogRepositoryMockRecorder {
 }
 
 // CountAllBooks mocks base method.
-func (m *MockCatalogRepository) CountAllBooks() (int, error) {
+func (m *MockCatalogRepository) CountBooks() (int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CountAllBooks")
+	ret := m.ctrl.Call(m, "CountBooks")
 	ret0, _ := ret[0].(int)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -46,7 +46,22 @@ func (m *MockCatalogRepository) CountAllBooks() (int, error) {
 // CountAllBooks indicates an expected call of CountAllBooks.
 func (mr *MockCatalogRepositoryMockRecorder) CountAllBooks() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountAllBooks", reflect.TypeOf((*MockCatalogRepository)(nil).CountAllBooks))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountBooks", reflect.TypeOf((*MockCatalogRepository)(nil).CountBooks))
+}
+
+// CountByParentCatalogEntryID mocks base method.
+func (m *MockCatalogRepository) CountByParentCatalogEntryID(parentCatalogEntryID string) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountByParentCatalogEntryID", parentCatalogEntryID)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountByParentCatalogEntryID indicates an expected call of CountByParentCatalogEntryID.
+func (mr *MockCatalogRepositoryMockRecorder) CountByParentCatalogEntryID(parentCatalogEntryID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountByParentCatalogEntryID", reflect.TypeOf((*MockCatalogRepository)(nil).CountByParentCatalogEntryID), parentCatalogEntryID)
 }
 
 // FindAllBooks mocks base method.
@@ -94,19 +109,34 @@ func (mr *MockCatalogRepositoryMockRecorder) FindAllByParentCatalogEntryID(paren
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAllByParentCatalogEntryID", reflect.TypeOf((*MockCatalogRepository)(nil).FindAllByParentCatalogEntryID), parentCatalogEntryID)
 }
 
-// FindAllRoots mocks base method.
-func (m *MockCatalogRepository) FindAllRoots() ([]domain.CatalogEntry, error) {
+// FindAllByParentCatalogEntryIDInPage mocks base method.
+func (m *MockCatalogRepository) FindAllByParentCatalogEntryIDInPage(parentCatalogEntryID string, page, pageSize int) ([]domain.CatalogEntry, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindAllRoots")
+	ret := m.ctrl.Call(m, "FindAllByParentCatalogEntryIDInPage", parentCatalogEntryID, page, pageSize)
 	ret0, _ := ret[0].([]domain.CatalogEntry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// FindAllRoots indicates an expected call of FindAllRoots.
-func (mr *MockCatalogRepositoryMockRecorder) FindAllRoots() *gomock.Call {
+// FindAllByParentCatalogEntryIDInPage indicates an expected call of FindAllByParentCatalogEntryIDInPage.
+func (mr *MockCatalogRepositoryMockRecorder) FindAllByParentCatalogEntryIDInPage(parentCatalogEntryID, page, pageSize interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAllRoots", reflect.TypeOf((*MockCatalogRepository)(nil).FindAllRoots))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAllByParentCatalogEntryIDInPage", reflect.TypeOf((*MockCatalogRepository)(nil).FindAllByParentCatalogEntryIDInPage), parentCatalogEntryID, page, pageSize)
+}
+
+// FindAllRootDirectories mocks base method.
+func (m *MockCatalogRepository) FindAllRootDirectories() ([]domain.CatalogEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindAllRootDirectories")
+	ret0, _ := ret[0].([]domain.CatalogEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindAllRootDirectories indicates an expected call of FindAllRootDirectories.
+func (mr *MockCatalogRepositoryMockRecorder) FindAllRootDirectories() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindAllRootDirectories", reflect.TypeOf((*MockCatalogRepository)(nil).FindAllRootDirectories))
 }
 
 // FindByID mocks base method.

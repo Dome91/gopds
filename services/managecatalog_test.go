@@ -20,12 +20,26 @@ func TestFetchCatalogEntryByID(t *testing.T) {
 	})
 }
 
-func TestFetchCatalogRoots(t *testing.T) {
+func TestFetchCatalogEntriesByParentCatalogEntryIDInPage(t *testing.T) {
+	withMock(t, func(controller *gomock.Controller) {
+		entry1 := domain.CatalogEntry{ID: "id1"}
+		entry2 := domain.CatalogEntry{ID: "id2"}
+		repository := mock_domain.NewMockCatalogRepository(controller)
+		repository.EXPECT().FindAllByParentCatalogEntryIDInPage("parentID", 0, 24).Return([]domain.CatalogEntry{entry1, entry2}, nil)
+
+		entries, err := FetchCatalogEntriesByParentCatalogEntryIDInPageProvider(repository)("parentID", 0, 24)
+		assert.Nil(t, err)
+		assert.Contains(t, entries, entry1)
+		assert.Contains(t, entries, entry2)
+	})
+}
+
+func TestFetchCatalogRootDirectories(t *testing.T) {
 	withMock(t, func(controller *gomock.Controller) {
 		root1 := domain.CatalogEntry{ID: "id1"}
 		root2 := domain.CatalogEntry{ID: "id2"}
 		repository := mock_domain.NewMockCatalogRepository(controller)
-		repository.EXPECT().FindAllRoots().Return([]domain.CatalogEntry{root1, root2}, nil)
+		repository.EXPECT().FindAllRootDirectories().Return([]domain.CatalogEntry{root1, root2}, nil)
 
 		roots, err := FetchCatalogRootDirectoriesProvider(repository)()
 		assert.Nil(t, err)
@@ -48,12 +62,23 @@ func TestFetchAllBooksInPage(t *testing.T) {
 	})
 }
 
-func TestCountAllBooks(t *testing.T) {
+func TestCountBooks(t *testing.T) {
 	withMock(t, func(controller *gomock.Controller) {
 		repository := mock_domain.NewMockCatalogRepository(controller)
 		repository.EXPECT().CountAllBooks().Return(2, nil)
 
-		count, err := CountAllBooksProvider(repository)()
+		count, err := CountBooksProvider(repository)()
+		assert.Nil(t, err)
+		assert.Equal(t, 2, count)
+	})
+}
+
+func TestCountCatalogEntriesByParentCatalogEntryID(t *testing.T) {
+	withMock(t, func(controller *gomock.Controller) {
+		repository := mock_domain.NewMockCatalogRepository(controller)
+		repository.EXPECT().CountByParentCatalogEntryID("parentCatalogEntryID").Return(2, nil)
+
+		count, err := CountCatalogEntriesByParentCatalogEntryIDProvider(repository)("parentCatalogEntryID")
 		assert.Nil(t, err)
 		assert.Equal(t, 2, count)
 	})

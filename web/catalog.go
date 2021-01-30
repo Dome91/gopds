@@ -13,20 +13,26 @@ const (
 )
 
 type CatalogHandler struct {
-	fetchAllBooksInPage         services.FetchAllBooksInPage
-	countAllBooks               services.CountAllBooks
-	fetchCatalogRootDirectories services.FetchCatalogRootDirectories
+	fetchAllBooksInPage                             services.FetchAllBooksInPage
+	countBooks                                      services.CountBooks
+	fetchCatalogRootDirectories                     services.FetchCatalogRootDirectories
+	fetchCatalogEntriesByParentCatalogEntryIDInPage services.FetchCatalogEntriesByParentCatalogEntryIDInPage
+	countCatalogEntriesByParentCatalogEntryID       services.CountCatalogEntriesByParentCatalogEntryID
 }
 
 func NewCatalogHandler(
 	fetchAllBooksInPage services.FetchAllBooksInPage,
-	countAllBooks services.CountAllBooks,
+	countBooks services.CountBooks,
 	fetchCatalogRootDirectories services.FetchCatalogRootDirectories,
+	fetchCatalogEntriesByParentCatalogEntryIDInPage services.FetchCatalogEntriesByParentCatalogEntryIDInPage,
+	countCatalogEntriesByParentCatalogEntryID services.CountCatalogEntriesByParentCatalogEntryID,
 ) *CatalogHandler {
 	return &CatalogHandler{
 		fetchAllBooksInPage:         fetchAllBooksInPage,
-		countAllBooks:               countAllBooks,
+		countBooks:                  countBooks,
 		fetchCatalogRootDirectories: fetchCatalogRootDirectories,
+		fetchCatalogEntriesByParentCatalogEntryIDInPage: fetchCatalogEntriesByParentCatalogEntryIDInPage,
+		countCatalogEntriesByParentCatalogEntryID:       countCatalogEntriesByParentCatalogEntryID,
 	}
 }
 
@@ -72,7 +78,20 @@ func (c *CatalogHandler) getPageByID(ctx *fiber.Ctx, id string, page int, pageSi
 		return c.getRootDirectories(ctx)
 	}
 
-	return nil
+	entries, err := c.fetchCatalogEntriesByParentCatalogEntryIDInPage(id, page, pageSize)
+	if err != nil {
+		return err
+	}
+
+	count, err := c.countCatalogEntriesByParentCatalogEntryID(id)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(getCatalogEntriesResponse{
+		Total:          count,
+		CatalogEntries: c.mapAllToResponse(entries),
+	})
 }
 
 func (c *CatalogHandler) getRootDirectories(ctx *fiber.Ctx) error {
@@ -93,7 +112,7 @@ func (c *CatalogHandler) getAllBooks(ctx *fiber.Ctx, page int, pageSize int) err
 		return err
 	}
 
-	count, err := c.countAllBooks()
+	count, err := c.countBooks()
 	if err != nil {
 		return err
 	}

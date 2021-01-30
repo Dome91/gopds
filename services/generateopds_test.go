@@ -79,7 +79,7 @@ func TestGenerateOPDSDirectoriesFeed(t *testing.T) {
 		catalogEntry2 := domain.CatalogEntry{ID: "id2", Name: "catalogEntry2"}
 
 		repository := mock_domain.NewMockCatalogRepository(controller)
-		repository.EXPECT().FindAllRoots().Return([]domain.CatalogEntry{catalogEntry1, catalogEntry2}, nil)
+		repository.EXPECT().FindAllRootDirectories().Return([]domain.CatalogEntry{catalogEntry1, catalogEntry2}, nil)
 
 		feed, err := GenerateOPDSDirectoriesFeedProvider(repository)()
 		assert.Nil(t, err)

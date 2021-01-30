@@ -107,7 +107,7 @@ func TestCatalogRepository_FindByID(t *testing.T) {
 	})
 }
 
-func TestCatalogRepository_FindAllRoots(t *testing.T) {
+func TestCatalogRepository_FindAllRootDirectories(t *testing.T) {
 	withDB(func(db *DB) {
 		_, _, _, ebooks, catalog := generateCatalog(db)
 
@@ -115,7 +115,7 @@ func TestCatalogRepository_FindAllRoots(t *testing.T) {
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
-		roots, err := repository.FindAllRoots()
+		roots, err := repository.FindAllRootDirectories()
 		assert.Nil(t, err)
 		assert.Len(t, roots, 1)
 
@@ -148,25 +148,44 @@ func TestCatalogRepository_FindAllByParentCatalogEntryID(t *testing.T) {
 	})
 }
 
-func TestCatalogRepository_FindAllBooksInPage(t *testing.T) {
+func TestCatalogRepository_FindAllByParentCatalogEntryIDInPage(t *testing.T) {
 	withDB(func(db *DB) {
-		book1, book2, _, _, catalog := generateCatalog(db)
+		book1, _, _, _, catalog := generateCatalog(db)
 
 		repository := NewCatalogRepository(db)
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
-		booksInPage, err := repository.FindAllBooksInPage(0, 2)
+		var parentEntity catalogEntryEntity
+		err = db.Get(&parentEntity, "select * from catalog_entries where parent_catalog_entry is null")
 		assert.Nil(t, err)
 
-		book1.ID = booksInPage[0].ID
-		book2.ID = booksInPage[1].ID
-		assert.Equal(t, book1, booksInPage[0])
-		assert.Equal(t, book2, booksInPage[1])
+		children, err := repository.FindAllByParentCatalogEntryIDInPage(parentEntity.ID, 0, 1)
+		assert.Nil(t, err)
+		assert.Len(t, children, 1)
+
+		book1.ID = children[0].ID
+		assert.Equal(t, book1, children[0])
 	})
 }
 
-func TestCatalogRepository_CountAllBooks(t *testing.T) {
+func TestCatalogRepository_FindAllBooksInPage(t *testing.T) {
+	withDB(func(db *DB) {
+		book1, _, _, _, catalog := generateCatalog(db)
+
+		repository := NewCatalogRepository(db)
+		err := repository.Save(catalog)
+		assert.Nil(t, err)
+
+		booksInPage, err := repository.FindAllBooksInPage(0, 1)
+		assert.Nil(t, err)
+
+		book1.ID = booksInPage[0].ID
+		assert.Equal(t, book1, booksInPage[0])
+	})
+}
+
+func TestCatalogRepository_CountBooks(t *testing.T) {
 	withDB(func(db *DB) {
 		_, _, _, _, catalog := generateCatalog(db)
 
@@ -174,7 +193,25 @@ func TestCatalogRepository_CountAllBooks(t *testing.T) {
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
-		count, err := repository.CountAllBooks()
+		count, err := repository.CountBooks()
+		assert.Nil(t, err)
+		assert.Equal(t, 2, count)
+	})
+}
+
+func TestCatalogRepository_CountByParentCatalogEntryID(t *testing.T) {
+	withDB(func(db *DB) {
+		_, _, _, _, catalog := generateCatalog(db)
+
+		repository := NewCatalogRepository(db)
+		err := repository.Save(catalog)
+		assert.Nil(t, err)
+
+		var parentEntity catalogEntryEntity
+		err = db.Get(&parentEntity, "select * from catalog_entries where parent_catalog_entry is null")
+		assert.Nil(t, err)
+
+		count, err := repository.CountByParentCatalogEntryID(parentEntity.ID)
 		assert.Nil(t, err)
 		assert.Equal(t, 2, count)
 	})

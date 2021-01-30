@@ -48,11 +48,13 @@ type CatalogEntry struct {
 type CatalogRepository interface {
 	Save(catalog Catalog) error
 	FindByID(id string) (CatalogEntry, error)
-	FindAllRoots() ([]CatalogEntry, error)
+	FindAllRootDirectories() ([]CatalogEntry, error)
 	FindAllBooks() ([]CatalogEntry, error)
 	FindAllByParentCatalogEntryID(parentCatalogEntryID string) ([]CatalogEntry, error)
+	FindAllByParentCatalogEntryIDInPage(parentCatalogEntryID string, page int, pageSize int) ([]CatalogEntry, error)
 	FindAllBooksInPage(page int, pageSize int) ([]CatalogEntry, error)
-	CountAllBooks() (int, error)
+	CountBooks() (int, error)
+	CountByParentCatalogEntryID(parentCatalogEntryID string) (int, error)
 }
 
 func catalogEntryTypeAnalyzerProvider(extension string, entryType CatalogEntryType) CatalogEntryTypeAnalyzer {

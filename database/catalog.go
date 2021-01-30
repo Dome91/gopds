@@ -86,7 +86,13 @@ func (c *CatalogRepository) FindAllByParentCatalogEntryID(parentCatalogEntryID s
 	return c.mapAllToDomain(entities), err
 }
 
-func (c *CatalogRepository) FindAllRoots() ([]domain.CatalogEntry, error) {
+func (c *CatalogRepository) FindAllByParentCatalogEntryIDInPage(parentCatalogEntryID string, page int, pageSize int) ([]domain.CatalogEntry, error) {
+	var entities []catalogEntryEntity
+	err := c.db.Select(&entities, "select * from catalog_entries where parent_catalog_entry = $1 order by name limit $2 offset $3", parentCatalogEntryID, pageSize, page*pageSize)
+	return c.mapAllToDomain(entities), err
+}
+
+func (c *CatalogRepository) FindAllRootDirectories() ([]domain.CatalogEntry, error) {
 	var entities []catalogEntryEntity
 	err := c.db.Select(&entities, "select * from catalog_entries where parent_catalog_entry is null order by name")
 	return c.mapAllToDomain(entities), err
@@ -104,9 +110,15 @@ func (c *CatalogRepository) FindAllBooksInPage(page int, pageSize int) ([]domain
 	return c.mapAllToDomain(entities), err
 }
 
-func (c *CatalogRepository) CountAllBooks() (int, error) {
+func (c *CatalogRepository) CountBooks() (int, error) {
 	var count int
 	err := c.db.Get(&count, "select count(*) from catalog_entries where is_directory = false")
+	return count, err
+}
+
+func (c *CatalogRepository) CountByParentCatalogEntryID(parentCatalogEntryID string) (int, error) {
+	var count int
+	err := c.db.Get(&count, "select count(*) from catalog_entries where parent_catalog_entry = $1", parentCatalogEntryID)
 	return count, err
 }
 

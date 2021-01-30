@@ -36,7 +36,7 @@ func GenerateOPDSAllFeedProvider(repository domain.CatalogRepository) GenerateOP
 
 func GenerateOPDSDirectoriesFeedProvider(repository domain.CatalogRepository) GenerateOPDSDirectoriesFeed {
 	return func() (domain.Feed, error) {
-		catalogEntries, err := repository.FindAllRoots()
+		catalogEntries, err := repository.FindAllRootDirectories()
 		if err != nil {
 			return domain.Feed{}, err
 		}

@@ -33,6 +33,9 @@ export class CatalogComponent implements OnInit {
         this.id = '';
       }
       this.catalogEntries = [];
+      this.total = 0;
+      this.page = 0;
+      this.pageSize = 24;
       this.fetchCatalogEntriesInPage();
     })
   }
