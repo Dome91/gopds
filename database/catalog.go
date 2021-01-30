@@ -92,10 +92,22 @@ func (c *CatalogRepository) FindAllRoots() ([]domain.CatalogEntry, error) {
 	return c.mapAllToDomain(entities), err
 }
 
-func (c *CatalogRepository) FindAllFiles() ([]domain.CatalogEntry, error) {
+func (c *CatalogRepository) FindAllBooks() ([]domain.CatalogEntry, error) {
 	var entities []catalogEntryEntity
 	err := c.db.Select(&entities, "select * from catalog_entries where is_directory = false order by name")
 	return c.mapAllToDomain(entities), err
+}
+
+func (c *CatalogRepository) FindAllBooksInPage(page int, pageSize int) ([]domain.CatalogEntry, error) {
+	var entities []catalogEntryEntity
+	err := c.db.Select(&entities, "select * from catalog_entries where is_directory = false order by name limit $1 offset $2", pageSize, page*pageSize)
+	return c.mapAllToDomain(entities), err
+}
+
+func (c *CatalogRepository) CountAllBooks() (int, error) {
+	var count int
+	err := c.db.Get(&count, "select count(*) from catalog_entries where is_directory = false")
+	return count, err
 }
 
 func (c *CatalogRepository) mapToDomain(entity catalogEntryEntity) domain.CatalogEntry {

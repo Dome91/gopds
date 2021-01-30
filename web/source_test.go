@@ -1,10 +1,8 @@
 package web
 
 import (
-	"encoding/json"
 	"github.com/stretchr/testify/assert"
 	"gopds/domain"
-	"io/ioutil"
 	"net/http"
 	"testing"
 )
@@ -31,12 +29,8 @@ func TestFetchAllSources_succeeds(t *testing.T) {
 	response, err := send(handler, "/api/v1/sources", http.MethodGet, nil)
 	assert.Nil(t, err)
 
-	bytes, err := ioutil.ReadAll(response.Body)
-	assert.Nil(t, err)
-
 	var body getAllSourcesResponse
-	err = json.Unmarshal(bytes, &body)
-	assert.Nil(t, err)
+	parseResponse(t, response, &body)
 
 	assertResponse := func(source domain.Source, response getSourceResponse) {
 		assert.EqualValues(t, source.ID, response.ID)

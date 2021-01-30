@@ -29,6 +29,8 @@ func main() {
 	fetchAllSources := services.FetchAllSourcesProvider(sourceRepository)
 	deleteSource := services.DeleteSourceProvider(sourceRepository)
 	fetchCatalogEntryByID := services.FetchCatalogEntryByIDProvider(catalogRepository)
+	fetchAllBooksInPage := services.FetchAllBooksInPageProvider(catalogRepository)
+	countAllBooks := services.CountAllBooksProvider(catalogRepository)
 	synchronizeCatalog := services.SynchronizeCatalogProvider(sourceRepository, catalogRepository)
 	generateOPDSRootFeed := services.GenerateOPDSRootFeedProvider()
 	generateOPDSAllFeed := services.GenerateOPDSAllFeedProvider(catalogRepository)
@@ -45,10 +47,11 @@ func main() {
 	userHandler := web.NewUserHandler(createUser, fetchAllUsers, deleteUser)
 	sourceHandler := web.NewSourceHandler(createSource, fetchAllSources, deleteSource, synchronizeCatalog)
 	opdsHandler := web.NewOPDSHandler(generateOPDSRootFeed, generateOPDSAllFeed, generateOPDSFoldersFeed, generateOPDSFeedByID, fetchCatalogEntryByID)
+	catalogHandler := web.NewCatalogHandler(fetchAllBooksInPage, countAllBooks)
 
 	withRoles := web.WithRolesProvider(store)
 	basicAuth := web.BasicAuthProvider(checkCredentials)
 	authorization := web.NewAuthorization(withRoles, basicAuth)
-	server := web.NewServer(authorization, userHandler, loginHandler, sourceHandler, opdsHandler)
+	server := web.NewServer(authorization, userHandler, loginHandler, sourceHandler, opdsHandler, catalogHandler)
 	server.Start()
 }

@@ -19,7 +19,7 @@ func GenerateOPDSRootFeedProvider() GenerateOPDSRootFeed {
 
 func GenerateOPDSAllFeedProvider(repository domain.CatalogRepository) GenerateOPDSAllFeed {
 	return func() (domain.Feed, error) {
-		catalogEntries, err := repository.FindAllFiles()
+		catalogEntries, err := repository.FindAllBooks()
 		if err != nil {
 			return domain.Feed{}, err
 		}

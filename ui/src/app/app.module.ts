@@ -18,6 +18,8 @@ import { SettingsUsersComponent } from './components/settings/settings-users/set
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import { CreateSourceComponent } from './components/settings/settings-sources/create-source/create-source.component';
 import { CreateUserComponent } from './components/settings/settings-users/create-user/create-user.component';
+import {InfiniteScrollModule} from "ngx-infinite-scroll";
+import { CatalogEntryComponent } from './components/catalog-entry/catalog-entry.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { CreateUserComponent } from './components/settings/settings-users/create
     SettingsUsersComponent,
     CreateSourceComponent,
     CreateUserComponent,
+    CatalogEntryComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,6 +45,7 @@ import { CreateUserComponent } from './components/settings/settings-users/create
       positionClass: 'toast-bottom-right',
     }),
     FontAwesomeModule,
+    InfiniteScrollModule,
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true}],
   bootstrap: [AppComponent]

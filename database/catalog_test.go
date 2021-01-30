@@ -65,7 +65,7 @@ func assertCatalogEntry(t *testing.T, entity catalogEntryEntity, catalogEntry do
 	assert.Equal(t, sourceID, entity.SourceID)
 }
 
-func TestCatalogRepository_FindAllFiles(t *testing.T) {
+func TestCatalogRepository_FindAllBooks(t *testing.T) {
 	withDB(func(db *DB) {
 		book1, book2, _, _, catalog := generateCatalog(db)
 
@@ -73,7 +73,7 @@ func TestCatalogRepository_FindAllFiles(t *testing.T) {
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
-		entries, err := repository.FindAllFiles()
+		entries, err := repository.FindAllBooks()
 		assert.Nil(t, err)
 		assert.Len(t, entries, 2)
 
@@ -145,6 +145,38 @@ func TestCatalogRepository_FindAllByParentCatalogEntryID(t *testing.T) {
 		book2.ID = children[1].ID
 		assert.Equal(t, book1, children[0])
 		assert.Equal(t, book2, children[1])
+	})
+}
+
+func TestCatalogRepository_FindAllBooksInPage(t *testing.T) {
+	withDB(func(db *DB) {
+		book1, book2, _, _, catalog := generateCatalog(db)
+
+		repository := NewCatalogRepository(db)
+		err := repository.Save(catalog)
+		assert.Nil(t, err)
+
+		booksInPage, err := repository.FindAllBooksInPage(0, 2)
+		assert.Nil(t, err)
+
+		book1.ID = booksInPage[0].ID
+		book2.ID = booksInPage[1].ID
+		assert.Equal(t, book1, booksInPage[0])
+		assert.Equal(t, book2, booksInPage[1])
+	})
+}
+
+func TestCatalogRepository_CountAllBooks(t *testing.T) {
+	withDB(func(db *DB) {
+		_, _, _, _, catalog := generateCatalog(db)
+
+		repository := NewCatalogRepository(db)
+		err := repository.Save(catalog)
+		assert.Nil(t, err)
+
+		count, err := repository.CountAllBooks()
+		assert.Nil(t, err)
+		assert.Equal(t, 2, count)
 	})
 }
 

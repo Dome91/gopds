@@ -49,8 +49,10 @@ type CatalogRepository interface {
 	Save(catalog Catalog) error
 	FindByID(id string) (CatalogEntry, error)
 	FindAllRoots() ([]CatalogEntry, error)
-	FindAllFiles() ([]CatalogEntry, error)
+	FindAllBooks() ([]CatalogEntry, error)
 	FindAllByParentCatalogEntryID(parentCatalogEntryID string) ([]CatalogEntry, error)
+	FindAllBooksInPage(page int, pageSize int) ([]CatalogEntry, error)
+	CountAllBooks() (int, error)
 }
 
 func catalogEntryTypeAnalyzerProvider(extension string, entryType CatalogEntryType) CatalogEntryTypeAnalyzer {

@@ -48,7 +48,7 @@ func TestGenerateOPDSAllFeed(t *testing.T) {
 		catalogEntry2 := domain.CatalogEntry{ID: "id2", Name: "catalogEntry2", Type: domain.CBZ}
 
 		repository := mock_domain.NewMockCatalogRepository(controller)
-		repository.EXPECT().FindAllFiles().Return([]domain.CatalogEntry{catalogEntry1, catalogEntry2}, nil)
+		repository.EXPECT().FindAllBooks().Return([]domain.CatalogEntry{catalogEntry1, catalogEntry2}, nil)
 
 		feed, err := GenerateOPDSAllFeedProvider(repository)()
 		assert.Nil(t, err)

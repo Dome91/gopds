@@ -4,9 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
+	"github.com/stretchr/testify/assert"
 	"gopds/domain"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 )
 
 func send(handler Handler, target string, method string, body interface{}) (*http.Response, error) {
@@ -27,4 +30,12 @@ func send(handler Handler, target string, method string, body interface{}) (*htt
 	request := httptest.NewRequest(method, target, bytes.NewReader(m))
 	request.Header.Set("Content-Type", "application/json")
 	return app.Test(request)
+}
+
+func parseResponse(t *testing.T, response *http.Response, body interface{}) {
+	bodyBytes, err := ioutil.ReadAll(response.Body)
+	assert.Nil(t, err)
+
+	err = json.Unmarshal(bodyBytes, body)
+	assert.Nil(t, err)
 }
