@@ -101,10 +101,10 @@ func AllAcquisitionEntry() Entry {
 	}
 }
 
-func FoldersAcquisitionEntry() Entry {
+func DirectoriesAcquisitionEntry() Entry {
 	return Entry{
-		ID:    "folders",
-		Title: "Catalog Folders",
-		Links: []Link{DirectoryAcquisitionLink("folders")},
+		ID:    "directories",
+		Title: "Catalog Directories",
+		Links: []Link{DirectoryAcquisitionLink("directories")},
 	}
 }

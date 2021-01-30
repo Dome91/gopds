@@ -7,18 +7,26 @@ import (
 	"strconv"
 )
 
+const (
+	idAll         = "all"
+	idDirectories = "directories"
+)
+
 type CatalogHandler struct {
-	fetchAllBooksInPage services.FetchAllBooksInPage
-	countAllBooks       services.CountAllBooks
+	fetchAllBooksInPage         services.FetchAllBooksInPage
+	countAllBooks               services.CountAllBooks
+	fetchCatalogRootDirectories services.FetchCatalogRootDirectories
 }
 
 func NewCatalogHandler(
 	fetchAllBooksInPage services.FetchAllBooksInPage,
 	countAllBooks services.CountAllBooks,
+	fetchCatalogRootDirectories services.FetchCatalogRootDirectories,
 ) *CatalogHandler {
 	return &CatalogHandler{
-		fetchAllBooksInPage: fetchAllBooksInPage,
-		countAllBooks:       countAllBooks,
+		fetchAllBooksInPage:         fetchAllBooksInPage,
+		countAllBooks:               countAllBooks,
+		fetchCatalogRootDirectories: fetchCatalogRootDirectories,
 	}
 }
 
@@ -29,6 +37,10 @@ func (c *CatalogHandler) Register(app *fiber.App, authorization *Authorization) 
 
 func (c *CatalogHandler) getPage(ctx *fiber.Ctx) error {
 	id := ctx.Query("id")
+	if id == "" {
+		return c.getRootPage(ctx)
+	}
+
 	page, err := strconv.Atoi(ctx.Query("page", "0"))
 	if err != nil {
 		return fiber.ErrBadRequest
@@ -39,27 +51,40 @@ func (c *CatalogHandler) getPage(ctx *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	if id == "" {
-		return c.getRootPage(ctx, page, pageSize)
-	}
-
 	return c.getPageByID(ctx, id, page, pageSize)
 }
 
-func (c *CatalogHandler) getRootPage(ctx *fiber.Ctx, page int, pageSize int) error {
-	allCatalogEntryResponse := catalogEntryResponse{ID: "all", Name: "All Catalog Entries", IsDirectory: true}
-	foldersCatalogEntryResponse := catalogEntryResponse{ID: "folders", Name: "Catalog Folders", IsDirectory: true}
+func (c *CatalogHandler) getRootPage(ctx *fiber.Ctx) error {
+	allCatalogEntryResponse := catalogEntryResponse{ID: idAll, Name: "All Catalog Entries", IsDirectory: true}
+	directoriesCatalogEntryResponse := catalogEntryResponse{ID: idDirectories, Name: "Catalog Directories", IsDirectory: true}
 	return ctx.JSON(getCatalogEntriesResponse{CatalogEntries: []catalogEntryResponse{
 		allCatalogEntryResponse,
-		foldersCatalogEntryResponse,
+		directoriesCatalogEntryResponse,
 	}, Total: 2})
 }
 
 func (c *CatalogHandler) getPageByID(ctx *fiber.Ctx, id string, page int, pageSize int) error {
-	if id == "all" {
+	if id == idAll {
 		return c.getAllBooks(ctx, page, pageSize)
 	}
+
+	if id == idDirectories {
+		return c.getRootDirectories(ctx)
+	}
+
 	return nil
+}
+
+func (c *CatalogHandler) getRootDirectories(ctx *fiber.Ctx) error {
+	directories, err := c.fetchCatalogRootDirectories()
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(getCatalogEntriesResponse{
+		Total:          len(directories),
+		CatalogEntries: c.mapAllToResponse(directories),
+	})
 }
 
 func (c *CatalogHandler) getAllBooks(ctx *fiber.Ctx, page int, pageSize int) error {

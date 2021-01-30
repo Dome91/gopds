@@ -34,11 +34,11 @@ func TestGenerateOPDSRootFeed(t *testing.T) {
 	assert.EqualValues(t, "application/atom+xml;profile=opds-catalog;kind=acquisition", entry1Links[0].Type)
 
 	entry2 := entries[1]
-	assert.Equal(t, "Catalog Folders", entry2.Title)
+	assert.Equal(t, "Catalog Directories", entry2.Title)
 	entry2Links := entry2.Links
 	assert.Len(t, entry1Links, 1)
 	assert.Equal(t, "http://opds-spec.org/crawlable", entry2Links[0].Rel)
-	assert.Equal(t, "/opds/folders", entry2Links[0].Href)
+	assert.Equal(t, "/opds/directories", entry2Links[0].Href)
 	assert.EqualValues(t, "application/atom+xml;profile=opds-catalog;kind=acquisition", entry2Links[0].Type)
 }
 
@@ -73,7 +73,7 @@ func TestGenerateOPDSAllFeed(t *testing.T) {
 	})
 }
 
-func TestGenerateOPDSFolderFeed(t *testing.T) {
+func TestGenerateOPDSDirectoriesFeed(t *testing.T) {
 	withMock(t, func(controller *gomock.Controller) {
 		catalogEntry1 := domain.CatalogEntry{ID: "id1", Name: "catalogEntry1"}
 		catalogEntry2 := domain.CatalogEntry{ID: "id2", Name: "catalogEntry2"}
@@ -81,10 +81,10 @@ func TestGenerateOPDSFolderFeed(t *testing.T) {
 		repository := mock_domain.NewMockCatalogRepository(controller)
 		repository.EXPECT().FindAllRoots().Return([]domain.CatalogEntry{catalogEntry1, catalogEntry2}, nil)
 
-		feed, err := GenerateOPDSFoldersFeedProvider(repository)()
+		feed, err := GenerateOPDSDirectoriesFeedProvider(repository)()
 		assert.Nil(t, err)
 		assert.Equal(t, "GOPDS", feed.ID)
-		assert.Equal(t, "Catalog Folders", feed.Title)
+		assert.Equal(t, "Catalog Directories", feed.Title)
 
 		entries := feed.Entries
 		assert.Len(t, entries, 2)

@@ -6,14 +6,14 @@ import (
 
 type GenerateOPDSRootFeed func() domain.Feed
 type GenerateOPDSAllFeed func() (domain.Feed, error)
-type GenerateOPDSFoldersFeed func() (domain.Feed, error)
+type GenerateOPDSDirectoriesFeed func() (domain.Feed, error)
 type GenerateOPDSFeedByID func(id string) (domain.Feed, error)
 
 func GenerateOPDSRootFeedProvider() GenerateOPDSRootFeed {
 	return func() domain.Feed {
 		allAcquisitionEntry := domain.AllAcquisitionEntry()
-		foldersAcquisitionEntry := domain.FoldersAcquisitionEntry()
-		return domain.RootFeed(allAcquisitionEntry, foldersAcquisitionEntry)
+		directoriesAcquisitionEntry := domain.DirectoriesAcquisitionEntry()
+		return domain.RootFeed(allAcquisitionEntry, directoriesAcquisitionEntry)
 	}
 }
 
@@ -34,7 +34,7 @@ func GenerateOPDSAllFeedProvider(repository domain.CatalogRepository) GenerateOP
 	}
 }
 
-func GenerateOPDSFoldersFeedProvider(repository domain.CatalogRepository) GenerateOPDSFoldersFeed {
+func GenerateOPDSDirectoriesFeedProvider(repository domain.CatalogRepository) GenerateOPDSDirectoriesFeed {
 	return func() (domain.Feed, error) {
 		catalogEntries, err := repository.FindAllRoots()
 		if err != nil {
@@ -47,8 +47,8 @@ func GenerateOPDSFoldersFeedProvider(repository domain.CatalogRepository) Genera
 			entries = append(entries, entry)
 		}
 
-		links := []domain.Link{domain.SelfLink("folders"), domain.StartLink()}
-		return domain.NewFeed("Catalog Folders", entries, links), nil
+		links := []domain.Link{domain.SelfLink("directories"), domain.StartLink()}
+		return domain.NewFeed("Catalog Directories", entries, links), nil
 	}
 }
 

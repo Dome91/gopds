@@ -10,7 +10,7 @@ import (
 type OPDSHandler struct {
 	generateOPDSRootFeed    services.GenerateOPDSRootFeed
 	generateOPDSAllFeed     services.GenerateOPDSAllFeed
-	generateOPDSFoldersFeed services.GenerateOPDSFoldersFeed
+	generateOPDSFoldersFeed services.GenerateOPDSDirectoriesFeed
 	generateOPDSFeedByID    services.GenerateOPDSFeedByID
 	fetchCatalogEntryByID   services.FetchCatalogEntryByID
 }
@@ -18,7 +18,7 @@ type OPDSHandler struct {
 func NewOPDSHandler(
 	generateOPDSRootFeed services.GenerateOPDSRootFeed,
 	generateOPDSAllFeed services.GenerateOPDSAllFeed,
-	generateOPDSFoldersFeed services.GenerateOPDSFoldersFeed,
+	generateOPDSFoldersFeed services.GenerateOPDSDirectoriesFeed,
 	generateOPDSFeedByID services.GenerateOPDSFeedByID,
 	fetchCatalogEntryByID services.FetchCatalogEntryByID,
 ) *OPDSHandler {

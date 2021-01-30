@@ -27,7 +27,7 @@ func TestFetchCatalogRoots(t *testing.T) {
 		repository := mock_domain.NewMockCatalogRepository(controller)
 		repository.EXPECT().FindAllRoots().Return([]domain.CatalogEntry{root1, root2}, nil)
 
-		roots, err := FetchCatalogRootsProvider(repository)()
+		roots, err := FetchCatalogRootDirectoriesProvider(repository)()
 		assert.Nil(t, err)
 		assert.Contains(t, roots, root1)
 		assert.Contains(t, roots, root2)
