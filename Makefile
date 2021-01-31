@@ -9,7 +9,7 @@ test-ui:
 
 build-ui:
 	mkdir -p public
-	rm -f public/*
+	rm -rf public/*
 	cd ui && npm install && npm run build -- --prod --output-path=../public
 
 test:
