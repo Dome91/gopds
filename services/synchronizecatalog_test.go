@@ -20,10 +20,9 @@ func TestSynchronizeCatalog(t *testing.T) {
 	azw3 := domain.CatalogEntry{Name: "azw3", Path: filepath.Join(path, "ebooks", "azw3"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{lordJimAzw3}}
 	ebooks := domain.CatalogEntry{Name: "ebooks", Path: filepath.Join(path, "ebooks"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{azw3, epub}}
 
-	cbr := domain.CatalogEntry{Name: "cbr", Path: filepath.Join(path, "comics", "cbr"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry(nil)}
 	comic1 := domain.CatalogEntry{Name: "comic1.cbz", Path: filepath.Join(path, "comics", "cbz", "comic1.cbz"), IsDirectory: false, Type: domain.CBZ, Children: []domain.CatalogEntry(nil)}
 	cbz := domain.CatalogEntry{Name: "cbz", Path: filepath.Join(path, "comics", "cbz"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{comic1}}
-	comics := domain.CatalogEntry{Name: "comics", Path: filepath.Join(path, "comics"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{cbr, cbz}}
+	comics := domain.CatalogEntry{Name: "comics", Path: filepath.Join(path, "comics"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{cbz}}
 
 	root := domain.CatalogEntry{Name: "test", Path: path, IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{comics, ebooks}}
 
