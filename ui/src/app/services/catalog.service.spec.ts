@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 
 import { CatalogService } from './catalog.service';
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
-import {CatalogEntry} from "../models/catalog";
+import {CatalogEntriesInPage, CatalogEntry} from "../models/catalog";
+import {CatalogEntryComponent} from "../components/catalog-entry/catalog-entry.component";
 
 describe('CatalogService', () => {
   let service: CatalogService;
@@ -10,7 +11,8 @@ describe('CatalogService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule]
+      imports: [HttpClientTestingModule],
+      declarations: [CatalogEntryComponent]
     });
     service = TestBed.inject(CatalogService);
     http = TestBed.inject(HttpTestingController);
@@ -25,7 +27,7 @@ describe('CatalogService', () => {
     const entry2 = new CatalogEntry('id2', 'name2', false);
 
     service.fetchInPage(0, 24, 'id1').subscribe(
-      response => {
+      (response: CatalogEntriesInPage) => {
         expect(response.catalogEntries[0]).toEqual(entry1);
         expect(response.catalogEntries[1]).toEqual(entry2);
         expect(response.total).toEqual(2);
@@ -33,7 +35,7 @@ describe('CatalogService', () => {
 
     const req = http.expectOne('/api/v1/catalog?page=0&pageSize=24&id=id1');
     expect(req.request.method).toBe('GET');
-    req.flush({comics: [entry1, entry2], total: 2});
+    req.flush({catalogEntries: [entry1, entry2], total: 2});
   });
 
 });
