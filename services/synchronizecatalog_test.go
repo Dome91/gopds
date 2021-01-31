@@ -13,14 +13,14 @@ func TestSynchronizeCatalog(t *testing.T) {
 	path, err := filepath.Abs("../test")
 	assert.Nil(t, err)
 
-	southEpub := domain.CatalogEntry{Name: "South.epub", Path: filepath.Join(path, "ebooks", "epub", "South.epub"), IsDirectory: false, Type: domain.EPUB, Children: []domain.CatalogEntry(nil)}
-	lordJimEpub := domain.CatalogEntry{Name: "Lord Jim.epub", Path: filepath.Join(path, "ebooks", "epub", "Lord Jim.epub"), IsDirectory: false, Type: domain.EPUB, Children: []domain.CatalogEntry(nil)}
+	southEpub := domain.CatalogEntry{Name: "South", Path: filepath.Join(path, "ebooks", "epub", "South.epub"), IsDirectory: false, Type: domain.EPUB, Children: []domain.CatalogEntry(nil)}
+	lordJimEpub := domain.CatalogEntry{Name: "Lord Jim", Path: filepath.Join(path, "ebooks", "epub", "Lord Jim.epub"), IsDirectory: false, Type: domain.EPUB, Children: []domain.CatalogEntry(nil)}
 	epub := domain.CatalogEntry{Name: "epub", Path: filepath.Join(path, "ebooks", "epub"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{lordJimEpub, southEpub}}
-	lordJimAzw3 := domain.CatalogEntry{Name: "Lord Jim.azw3", Path: filepath.Join(path, "ebooks", "azw3", "Lord Jim.azw3"), IsDirectory: false, Type: domain.AZW3, Children: []domain.CatalogEntry(nil)}
+	lordJimAzw3 := domain.CatalogEntry{Name: "Lord Jim", Path: filepath.Join(path, "ebooks", "azw3", "Lord Jim.azw3"), IsDirectory: false, Type: domain.AZW3, Children: []domain.CatalogEntry(nil)}
 	azw3 := domain.CatalogEntry{Name: "azw3", Path: filepath.Join(path, "ebooks", "azw3"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{lordJimAzw3}}
 	ebooks := domain.CatalogEntry{Name: "ebooks", Path: filepath.Join(path, "ebooks"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{azw3, epub}}
 
-	comic1 := domain.CatalogEntry{Name: "comic1.cbz", Path: filepath.Join(path, "comics", "cbz", "comic1.cbz"), IsDirectory: false, Type: domain.CBZ, Children: []domain.CatalogEntry(nil)}
+	comic1 := domain.CatalogEntry{Name: "comic1", Path: filepath.Join(path, "comics", "cbz", "comic1.cbz"), IsDirectory: false, Type: domain.CBZ, Children: []domain.CatalogEntry(nil)}
 	cbz := domain.CatalogEntry{Name: "cbz", Path: filepath.Join(path, "comics", "cbz"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{comic1}}
 	comics := domain.CatalogEntry{Name: "comics", Path: filepath.Join(path, "comics"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{cbz}}
 

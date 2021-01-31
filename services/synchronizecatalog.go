@@ -72,5 +72,12 @@ func processFileCatalogEntry(info os.FileInfo, path string) (domain.CatalogEntry
 		return domain.CatalogEntry{}, err
 	}
 
-	return domain.CatalogEntry{Name: info.Name(), Path: path, IsDirectory: false, Children: nil, Type: catalogEntryType}, nil
+	name := determineFileCatalogEntryName(info)
+	return domain.CatalogEntry{Name: name, Path: path, IsDirectory: false, Children: nil, Type: catalogEntryType}, nil
+}
+
+func determineFileCatalogEntryName(info os.FileInfo) string {
+	name := info.Name()
+	var extension = filepath.Ext(name)
+	return name[0 : len(name)-len(extension)]
 }
