@@ -18,6 +18,7 @@ type CatalogHandler struct {
 	fetchCatalogRootDirectories                     services.FetchCatalogRootDirectories
 	fetchCatalogEntriesByParentCatalogEntryIDInPage services.FetchCatalogEntriesByParentCatalogEntryIDInPage
 	countCatalogEntriesByParentCatalogEntryID       services.CountCatalogEntriesByParentCatalogEntryID
+	fetchCatalogEntryByID                           services.FetchCatalogEntryByID
 }
 
 func NewCatalogHandler(
@@ -26,6 +27,7 @@ func NewCatalogHandler(
 	fetchCatalogRootDirectories services.FetchCatalogRootDirectories,
 	fetchCatalogEntriesByParentCatalogEntryIDInPage services.FetchCatalogEntriesByParentCatalogEntryIDInPage,
 	countCatalogEntriesByParentCatalogEntryID services.CountCatalogEntriesByParentCatalogEntryID,
+	fetchCatalogEntryByID services.FetchCatalogEntryByID,
 ) *CatalogHandler {
 	return &CatalogHandler{
 		fetchAllBooksInPage:         fetchAllBooksInPage,
@@ -33,6 +35,7 @@ func NewCatalogHandler(
 		fetchCatalogRootDirectories: fetchCatalogRootDirectories,
 		fetchCatalogEntriesByParentCatalogEntryIDInPage: fetchCatalogEntriesByParentCatalogEntryIDInPage,
 		countCatalogEntriesByParentCatalogEntryID:       countCatalogEntriesByParentCatalogEntryID,
+		fetchCatalogEntryByID:                           fetchCatalogEntryByID,
 	}
 }
 
@@ -121,6 +124,21 @@ func (c *CatalogHandler) getAllBooks(ctx *fiber.Ctx, page int, pageSize int) err
 		Total:          count,
 		CatalogEntries: c.mapAllToResponse(booksInPage),
 	})
+}
+
+func (c *CatalogHandler) download(ctx *fiber.Ctx) error {
+	id := ctx.Params("id")
+	if id == "" {
+		return fiber.ErrBadRequest
+	}
+
+	catalogEntry, err := c.fetchCatalogEntryByID(id)
+	if err != nil {
+		return err
+	}
+
+	ctx.Set(fiber.HeaderContentDisposition, "filename="+catalogEntry.Name)
+	return ctx.SendFile(catalogEntry.Path)
 }
 
 func (c *CatalogHandler) mapAllToResponse(entries []domain.CatalogEntry) []catalogEntryResponse {

@@ -50,7 +50,7 @@ func main() {
 	userHandler := web.NewUserHandler(createUser, fetchAllUsers, deleteUser)
 	sourceHandler := web.NewSourceHandler(createSource, fetchAllSources, deleteSource, synchronizeCatalog)
 	opdsHandler := web.NewOPDSHandler(generateOPDSRootFeed, generateOPDSAllFeed, generateOPDSDirectoriesFeed, generateOPDSFeedByID, fetchCatalogEntryByID)
-	catalogHandler := web.NewCatalogHandler(fetchAllBooksInPage, countBooks, fetchCatalogRootDirectories, fetchCatalogEntriesByParentCatalogEntryIDInPage, countCatalogEntriesByParentCatalogEntryID)
+	catalogHandler := web.NewCatalogHandler(fetchAllBooksInPage, countBooks, fetchCatalogRootDirectories, fetchCatalogEntriesByParentCatalogEntryIDInPage, countCatalogEntriesByParentCatalogEntryID, fetchCatalogEntryByID)
 
 	withRoles := web.WithRolesProvider(store)
 	basicAuth := web.BasicAuthProvider(checkCredentials)
