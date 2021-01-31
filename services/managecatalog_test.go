@@ -65,7 +65,7 @@ func TestFetchAllBooksInPage(t *testing.T) {
 func TestCountBooks(t *testing.T) {
 	withMock(t, func(controller *gomock.Controller) {
 		repository := mock_domain.NewMockCatalogRepository(controller)
-		repository.EXPECT().CountAllBooks().Return(2, nil)
+		repository.EXPECT().CountBooks().Return(2, nil)
 
 		count, err := CountBooksProvider(repository)()
 		assert.Nil(t, err)
