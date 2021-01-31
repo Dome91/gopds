@@ -6,6 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	log "github.com/sirupsen/logrus"
+	"gopds/configuration"
 	"net/http"
 )
 
@@ -32,7 +34,10 @@ func NewServer(authorization *Authorization, handlers ...Handler) *Server {
 }
 
 func (s *Server) Start() {
-	s.app.Listen(":3000")
+	err := s.app.Listen(configuration.Address + ":" + configuration.Port)
+	if err != nil {
+		log.Warn(err)
+	}
 }
 
 func serveUI(app *fiber.App) {

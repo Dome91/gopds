@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+	// Configuration
+	configuration.ParseFlags()
+
 	// Database
 	db := database.New(configuration.GetDatabasePath())
 	defer db.Close()
