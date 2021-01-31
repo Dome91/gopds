@@ -7,7 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.3.3
 	github.com/golang/mock v1.4.4
 	github.com/google/uuid v1.1.4
-	github.com/jmoiron/sqlx v1.2.0
+	github.com/jmoiron/sqlx v1.3.1
 	github.com/lopezator/migrator v0.3.0
 	github.com/mattn/go-sqlite3 v1.14.6
 	github.com/sethvargo/go-password v0.2.0
