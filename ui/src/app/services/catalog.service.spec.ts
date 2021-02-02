@@ -1,6 +1,6 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { CatalogService } from './catalog.service';
+import {CatalogService} from './catalog.service';
 import {HttpClientTestingModule, HttpTestingController} from "@angular/common/http/testing";
 import {CatalogEntriesInPage, CatalogEntry} from "../models/catalog";
 import {CatalogEntryComponent} from "../components/catalog-entry/catalog-entry.component";
@@ -23,8 +23,8 @@ describe('CatalogService', () => {
   });
 
   it('should fetch catalog entries in page', () => {
-    const entry1 = new CatalogEntry('id1', 'name1', true);
-    const entry2 = new CatalogEntry('id2', 'name2', false);
+    const entry1 = new CatalogEntry('id1', 'name1', true, "");
+    const entry2 = new CatalogEntry('id2', 'name2', false, "CBZ");
 
     service.fetchInPage(0, 24, 'id1').subscribe(
       (response: CatalogEntriesInPage) => {

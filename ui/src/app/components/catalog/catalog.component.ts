@@ -57,7 +57,9 @@ export class CatalogComponent implements OnInit {
     );
   }
 
-  navigateToCatalogEntry(id: string) {
-    this.router.navigateByUrl(`catalog?id=${id}`);
+  navigateToCatalogEntry(entry: CatalogEntry) {
+    if (entry.isDirectory) {
+      this.router.navigateByUrl(`catalog?id=${entry.id}`);
+    }
   }
 }

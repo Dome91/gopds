@@ -7,7 +7,7 @@
     <div *ngFor="let catalogEntry of catalogEntries"
          class="col-lg-2 col-md-3 col-sm-6 col-6 d-flex align-items-end mb-3"
          id="catalog-entry-{{catalogEntry.id}}">
-      <app-catalog-entry [catalogEntry]="catalogEntry" (click)="navigateToCatalogEntry(catalogEntry.id)"></app-catalog-entry>
+      <app-catalog-entry [catalogEntry]="catalogEntry" (click)="navigateToCatalogEntry(catalogEntry)"></app-catalog-entry>
     </div>
   </div>
 </div>

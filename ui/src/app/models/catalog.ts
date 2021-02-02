@@ -4,6 +4,7 @@ export class CatalogEntriesInPage {
 }
 
 export class CatalogEntry {
-  constructor(public id: string, public name: string, public isDirectory: boolean) {
+  constructor(public id: string, public name: string, public isDirectory: boolean, public type: string) {
   }
+
 }

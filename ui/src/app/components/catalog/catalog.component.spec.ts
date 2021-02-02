@@ -18,7 +18,7 @@ describe('CatalogComponent', () => {
   let catalogService: SpyObj<CatalogService>;
   let router: SpyObj<Router>;
 
-  let catalogEntriesInPage = new CatalogEntriesInPage(48, [new CatalogEntry('id2', 'name2', true), new CatalogEntry('id3', 'name3', false)]);
+  let catalogEntriesInPage = new CatalogEntriesInPage(48, [new CatalogEntry('id2', 'name2', true, ""), new CatalogEntry('id3', 'name3', false, "CBZ")]);
 
   beforeEach(async () => {
     catalogService = createSpyObj<CatalogService>(['fetchInPage']);
@@ -58,7 +58,7 @@ describe('CatalogComponent', () => {
   });
 
   it('should navigate to other catalog entry', () => {
-    component.navigateToCatalogEntry('id1');
-    expect(router.navigateByUrl).toHaveBeenCalledWith('catalog?id=id1')
+    component.navigateToCatalogEntry(catalogEntriesInPage.catalogEntries[0]);
+    expect(router.navigateByUrl).toHaveBeenCalledWith('catalog?id=id2')
   });
 });

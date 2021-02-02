@@ -11,11 +11,10 @@ export class CatalogEntryComponent implements OnInit {
 
   @Input() catalogEntry: CatalogEntry;
   downloadLink: string;
-
   faDownload = faDownload;
 
   constructor() {
-    this.catalogEntry = new CatalogEntry('', '', true);
+    this.catalogEntry = new CatalogEntry('', '', true, "");
     this.downloadLink = '';
   }
 
