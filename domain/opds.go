@@ -42,7 +42,7 @@ func AllFeed(entries []Entry) Feed {
 		ID:      id,
 		Title:   allTitle,
 		Entries: entries,
-		Links:   []Link{StartLink(), SelfLink("/all")},
+		Links:   []Link{StartLink(), SelfLink("all")},
 	}
 }
 
@@ -55,7 +55,7 @@ type Link struct {
 
 func SelfLink(href string) Link {
 	return Link{
-		Href: "/opds" + href,
+		Href: "/opds/" + href,
 		Rel:  "self",
 		Type: acquisitionType,
 	}
@@ -77,7 +77,7 @@ func DirectoryAcquisitionLink(id string) Link {
 	}
 }
 
-func FileAcquisitionLink(catalogEntry CatalogEntry) Link {
+func BookAcquisitionLink(catalogEntry CatalogEntry) Link {
 	href := fmt.Sprintf("/opds/%s/download", catalogEntry.ID)
 	return Link{
 		Href: href,

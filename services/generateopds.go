@@ -26,7 +26,7 @@ func GenerateOPDSAllFeedProvider(repository domain.CatalogRepository) GenerateOP
 
 		var entries []domain.Entry
 		for _, catalogEntry := range catalogEntries {
-			entry := domain.Entry{ID: catalogEntry.ID, Title: catalogEntry.Name, Links: []domain.Link{domain.FileAcquisitionLink(catalogEntry)}}
+			entry := domain.Entry{ID: catalogEntry.ID, Title: catalogEntry.Name, Links: []domain.Link{domain.BookAcquisitionLink(catalogEntry)}}
 			entries = append(entries, entry)
 		}
 
@@ -70,7 +70,7 @@ func GenerateOPDSFeedByIDProvider(repository domain.CatalogRepository) GenerateO
 			if child.IsDirectory {
 				entry = domain.Entry{ID: child.ID, Title: child.Name, Links: []domain.Link{domain.DirectoryAcquisitionLink(child.ID)}}
 			} else {
-				entry = domain.Entry{ID: child.ID, Title: child.Name, Links: []domain.Link{domain.FileAcquisitionLink(child)}}
+				entry = domain.Entry{ID: child.ID, Title: child.Name, Links: []domain.Link{domain.BookAcquisitionLink(child)}}
 			}
 			entries = append(entries, entry)
 		}

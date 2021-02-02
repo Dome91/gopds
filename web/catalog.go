@@ -155,6 +155,7 @@ func (c *CatalogHandler) mapToResponse(entry domain.CatalogEntry) catalogEntryRe
 		ID:          entry.ID,
 		Name:        entry.Name,
 		IsDirectory: entry.IsDirectory,
+		Type:        entry.Type,
 	}
 }
 
@@ -164,7 +165,8 @@ type getCatalogEntriesResponse struct {
 }
 
 type catalogEntryResponse struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	IsDirectory bool   `json:"isDirectory"`
+	ID          string                  `json:"id"`
+	Name        string                  `json:"name"`
+	IsDirectory bool                    `json:"isDirectory"`
+	Type        domain.CatalogEntryType `json:"type"`
 }

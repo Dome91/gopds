@@ -42,13 +42,13 @@ func TestGetByID(t *testing.T) {
 	assert.Equal(t, fiber.MIMEApplicationXML, response.Header.Get(fiber.HeaderContentType))
 }
 
-func TestGetFolders(t *testing.T) {
-	generateOPDSFoldersFeed := func() (domain.Feed, error) {
+func TestGetDirectories(t *testing.T) {
+	generateOPDSDirectoriesFeed := func() (domain.Feed, error) {
 		return domain.Feed{}, nil
 	}
-	handler := NewOPDSHandler(nil, nil, generateOPDSFoldersFeed, nil, nil)
+	handler := NewOPDSHandler(nil, nil, generateOPDSDirectoriesFeed, nil, nil)
 
-	response, err := send(handler, "/opds/folders", http.MethodGet, nil)
+	response, err := send(handler, "/opds/directories", http.MethodGet, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, response.StatusCode)
 	assert.Equal(t, fiber.MIMEApplicationXML, response.Header.Get(fiber.HeaderContentType))

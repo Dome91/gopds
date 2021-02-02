@@ -8,11 +8,11 @@ import (
 )
 
 type OPDSHandler struct {
-	generateOPDSRootFeed    services.GenerateOPDSRootFeed
-	generateOPDSAllFeed     services.GenerateOPDSAllFeed
-	generateOPDSFoldersFeed services.GenerateOPDSDirectoriesFeed
-	generateOPDSFeedByID    services.GenerateOPDSFeedByID
-	fetchCatalogEntryByID   services.FetchCatalogEntryByID
+	generateOPDSRootFeed        services.GenerateOPDSRootFeed
+	generateOPDSAllFeed         services.GenerateOPDSAllFeed
+	generateOPDSDirectoriesFeed services.GenerateOPDSDirectoriesFeed
+	generateOPDSFeedByID        services.GenerateOPDSFeedByID
+	fetchCatalogEntryByID       services.FetchCatalogEntryByID
 }
 
 func NewOPDSHandler(
@@ -23,11 +23,11 @@ func NewOPDSHandler(
 	fetchCatalogEntryByID services.FetchCatalogEntryByID,
 ) *OPDSHandler {
 	return &OPDSHandler{
-		generateOPDSRootFeed:    generateOPDSRootFeed,
-		generateOPDSAllFeed:     generateOPDSAllFeed,
-		generateOPDSFoldersFeed: generateOPDSFoldersFeed,
-		generateOPDSFeedByID:    generateOPDSFeedByID,
-		fetchCatalogEntryByID:   fetchCatalogEntryByID,
+		generateOPDSRootFeed:        generateOPDSRootFeed,
+		generateOPDSAllFeed:         generateOPDSAllFeed,
+		generateOPDSDirectoriesFeed: generateOPDSFoldersFeed,
+		generateOPDSFeedByID:        generateOPDSFeedByID,
+		fetchCatalogEntryByID:       fetchCatalogEntryByID,
 	}
 }
 
@@ -36,7 +36,7 @@ func (o *OPDSHandler) Register(app *fiber.App, authorization *Authorization) {
 	group.Use(authorization.BasicAuth)
 	group.Get("", o.root)
 	group.Get("/all", o.all)
-	group.Get("/folders", o.folders)
+	group.Get("/directories", o.directories)
 	group.Get("/:id", o.byID)
 	group.Get("/:id/download", o.download)
 }
@@ -55,8 +55,8 @@ func (o *OPDSHandler) all(ctx *fiber.Ctx) error {
 	return sendFeedAsXML(ctx, feed)
 }
 
-func (o *OPDSHandler) folders(ctx *fiber.Ctx) error {
-	feed, err := o.generateOPDSFoldersFeed()
+func (o *OPDSHandler) directories(ctx *fiber.Ctx) error {
+	feed, err := o.generateOPDSDirectoriesFeed()
 	if err != nil {
 		return err
 	}
