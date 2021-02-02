@@ -1,6 +1,7 @@
 package web
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
 	"gopds/domain"
 	"net/http"
@@ -98,6 +99,20 @@ func TestGetPageByID(t *testing.T) {
 	assert.Len(t, body.CatalogEntries, 2)
 	assertCatalogEntryResponse(t, dir1, body.CatalogEntries[0])
 	assertCatalogEntryResponse(t, dir2, body.CatalogEntries[1])
+}
+
+func TestCatalogDownload(t *testing.T) {
+	fetchCatalogEntryByID := func(id string) (domain.CatalogEntry, error) {
+		assert.Equal(t, "id1", id)
+		return domain.CatalogEntry{Name: "South", Path: "../test/ebooks/epub/South.epub"}, nil
+	}
+	handler := NewCatalogHandler(nil, nil, nil, nil, nil, fetchCatalogEntryByID)
+
+	response, err := send(handler, "/api/v1/catalog/id1/download", http.MethodGet, nil)
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, response.StatusCode)
+	assert.Equal(t, "filename=South.epub", response.Header.Get(fiber.HeaderContentDisposition))
+	assert.Equal(t, "896191", response.Header.Get(fiber.HeaderContentLength))
 }
 
 func assertCatalogEntryResponse(t *testing.T, entry domain.CatalogEntry, response catalogEntryResponse) {

@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"gopds/domain"
 	"gopds/services"
+	"path"
 	"strconv"
 )
 
@@ -41,7 +42,9 @@ func NewCatalogHandler(
 
 func (c *CatalogHandler) Register(app *fiber.App, authorization *Authorization) {
 	getPage := authorization.WithRoles(c.getPage, domain.RoleUser, domain.RoleAdmin)
+	download := authorization.WithRoles(c.download, domain.RoleUser, domain.RoleAdmin)
 	app.Get("/api/v1/catalog", getPage)
+	app.Get("/api/v1/catalog/:id/download", download)
 }
 
 func (c *CatalogHandler) getPage(ctx *fiber.Ctx) error {
@@ -137,7 +140,8 @@ func (c *CatalogHandler) download(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	ctx.Set(fiber.HeaderContentDisposition, "filename="+catalogEntry.Name)
+	filename := path.Base(catalogEntry.Path)
+	ctx.Set(fiber.HeaderContentDisposition, "filename="+filename)
 	return ctx.SendFile(catalogEntry.Path)
 }
 

@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"gopds/domain"
 	"gopds/services"
+	"path"
 )
 
 type OPDSHandler struct {
@@ -89,7 +90,8 @@ func (o *OPDSHandler) download(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	ctx.Set(fiber.HeaderContentDisposition, "filename="+catalogEntry.Name)
+	filename := path.Base(catalogEntry.Path)
+	ctx.Set(fiber.HeaderContentDisposition, "filename="+filename)
 	return ctx.SendFile(catalogEntry.Path)
 }
 

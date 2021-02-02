@@ -54,10 +54,10 @@ func TestGetDirectories(t *testing.T) {
 	assert.Equal(t, fiber.MIMEApplicationXML, response.Header.Get(fiber.HeaderContentType))
 }
 
-func TestDownload(t *testing.T) {
+func TestOPDSDownload(t *testing.T) {
 	fetchCatalogEntryByID := func(id string) (domain.CatalogEntry, error) {
 		assert.Equal(t, "id1", id)
-		return domain.CatalogEntry{Name: "South.epub", Path: "../test/ebooks/epub/South.epub"}, nil
+		return domain.CatalogEntry{Name: "South", Path: "../test/ebooks/epub/South.epub"}, nil
 	}
 	handler := NewOPDSHandler(nil, nil, nil, nil, fetchCatalogEntryByID)
 
