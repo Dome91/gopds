@@ -4,15 +4,9 @@
     <div class="bottom-img-overlay pr-2 pl-2 pr-lg-3 pl-lg-3">
       <h5 class="card-title box-text-shadow">{{catalogEntry.name}}</h5>
       <div *ngIf="!catalogEntry.isDirectory" class="catalog-entry-action-icons">
-        <div ngbDropdown class="d-inline-block">
-          <button class="btn btn-outline-secondary" id="book-action-dropdown" ngbDropdownToggle></button>
-          <div ngbDropdownMenu aria-labelledby="book-action-dropdown">
-            <a ngbDropdownItem [href]="downloadLink" class="d-flex justify-content-between pl-3 pr-3">
-              <fa-icon [icon]="faDownload"></fa-icon>
-              <div>Download ({{catalogEntry.type}})</div>
-            </a>
-          </div>
-        </div>
+        <a [href]="downloadLink">
+          <fa-icon size="lg" [icon]="faDownload"></fa-icon>
+        </a>
       </div>
     </div>
   </div>
