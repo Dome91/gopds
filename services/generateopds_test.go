@@ -19,7 +19,7 @@ func TestGenerateOPDSRootFeed(t *testing.T) {
 	assert.Equal(t, "/opds", links[0].Href)
 	assert.EqualValues(t, "application/atom+xml;profile=opds-catalog;kind=acquisition", links[0].Type)
 	assert.Equal(t, "self", links[1].Rel)
-	assert.Equal(t, "/opds", links[1].Href)
+	assert.Equal(t, "/opds/", links[1].Href)
 	assert.EqualValues(t, "application/atom+xml;profile=opds-catalog;kind=acquisition", links[1].Type)
 
 	entries := feed.Entries

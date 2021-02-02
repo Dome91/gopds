@@ -47,10 +47,10 @@ func AllFeed(entries []Entry) Feed {
 }
 
 type Link struct {
-	XMLName xml.Name         `xml:"link"`
-	Href    string           `xml:"href,attr"`
-	Rel     string           `xml:"rel,attr"`
-	Type    CatalogEntryType `xml:"type,attr"`
+	XMLName xml.Name             `xml:"link"`
+	Href    string               `xml:"href,attr"`
+	Rel     string               `xml:"rel,attr"`
+	Type    CatalogEntryMIMEType `xml:"type,attr"`
 }
 
 func SelfLink(href string) Link {
@@ -82,7 +82,7 @@ func BookAcquisitionLink(catalogEntry CatalogEntry) Link {
 	return Link{
 		Href: href,
 		Rel:  "http://opds-spec.org/acquisition/",
-		Type: catalogEntry.Type,
+		Type: GetMimeType(catalogEntry.Type),
 	}
 }
 

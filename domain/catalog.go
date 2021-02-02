@@ -8,15 +8,22 @@ import (
 //go:generate mockgen -destination=../mock/domain/catalog.go -source=catalog.go
 
 type CatalogEntryType string
+type CatalogEntryMIMEType string
 type CatalogEntryTypeAnalyzer func(path string) CatalogEntryType
 
 const (
+	MimeEpub CatalogEntryMIMEType = "application/epub+zip"
+	MimeCbz  CatalogEntryMIMEType = "application/vnd.comicbook+zip"
+	MimeCbr  CatalogEntryMIMEType = "application/vnd.comicbook+rar"
+	MimeAzw3 CatalogEntryMIMEType = "application/vnd.amazon.ebook"
+	MimeMobi CatalogEntryMIMEType = "application/x-mobipocket-ebook"
+
 	DIRECTORY CatalogEntryType = ""
-	EPUB      CatalogEntryType = "application/epub+zip"
-	CBZ       CatalogEntryType = "application/vnd.comicbook+zip"
-	CBR       CatalogEntryType = "application/vnd.comicbook+rar"
-	AZW3      CatalogEntryType = "application/vnd.amazon.ebook"
-	MOBI      CatalogEntryType = "application/x-mobipocket-ebook"
+	EPUB      CatalogEntryType = "EPUB"
+	CBZ       CatalogEntryType = "CBZ"
+	CBR       CatalogEntryType = "CBR"
+	AZW3      CatalogEntryType = "AZW3"
+	MOBI      CatalogEntryType = "MOBI"
 )
 
 var (
@@ -77,4 +84,21 @@ func DetermineCatalogEntryType(path string) (CatalogEntryType, error) {
 	}
 
 	return "", ErrUnsupportedFiletype
+}
+
+func GetMimeType(entryType CatalogEntryType) CatalogEntryMIMEType {
+	switch entryType {
+	case EPUB:
+		return MimeEpub
+	case CBZ:
+		return MimeCbz
+	case CBR:
+		return MimeCbr
+	case AZW3:
+		return MimeAzw3
+	case MOBI:
+		return MimeMobi
+	default:
+		return ""
+	}
 }
