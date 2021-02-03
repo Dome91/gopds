@@ -50,6 +50,7 @@ type CatalogEntry struct {
 	IsDirectory bool
 	Children    []CatalogEntry
 	Type        CatalogEntryType
+	Cover       string
 }
 
 type CatalogRepository interface {
@@ -62,6 +63,7 @@ type CatalogRepository interface {
 	FindAllBooksInPage(page int, pageSize int) ([]CatalogEntry, error)
 	CountBooks() (int, error)
 	CountByParentCatalogEntryID(parentCatalogEntryID string) (int, error)
+	UpdateSetCoverByID(id string, cover string) error
 }
 
 func catalogEntryTypeAnalyzerProvider(extension string, entryType CatalogEntryType) CatalogEntryTypeAnalyzer {

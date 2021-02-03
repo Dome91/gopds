@@ -22,6 +22,7 @@ create table catalog_entries
     is_directory           integer not null,
     found_during_last_sync integer not null default true,
     type                   varchar not null,
+    cover                  varchar,
     created_at             datetime         default current_timestamp,
     parent_catalog_entry   varchar,
     source                 varchar not null,
