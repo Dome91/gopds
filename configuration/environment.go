@@ -38,7 +38,14 @@ func GetDatabasePath() string {
 
 func createDataDirectory() {
 	dataPath := filepath.Join(".", "data")
+	coversPath := filepath.Join(dataPath, "covers")
+
 	err := os.MkdirAll(dataPath, os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+
+	err = os.MkdirAll(coversPath, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}

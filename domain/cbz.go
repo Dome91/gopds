@@ -1,15 +1,13 @@
 package domain
 
 import (
-	"archive/zip"
 	"github.com/mholt/archiver/v3"
-	log "github.com/sirupsen/logrus"
 	"path/filepath"
 	"sort"
 	"strings"
 )
 
-func ForEveryFileInCBZDo(entry CatalogEntry, predicate CatalogEntryFilePredicate, consumer func(file archiver.File) error) error {
+func ForEveryFileInCatalogEntryDO(entry CatalogEntry, predicate CatalogEntryFilePredicate, consumer func(file archiver.File) error) error {
 	walker, err := getSupportedWalker(entry)
 	if err != nil {
 		return err
@@ -24,22 +22,16 @@ func ForEveryFileInCBZDo(entry CatalogEntry, predicate CatalogEntryFilePredicate
 	})
 }
 
-func GetFilePathsInCatalogEntryInAlphabeticalOrder(entry CatalogEntry, predicate CatalogEntryFilePredicate) ([]string, error) {
+func GetFilenamesInCatalogEntryInAlphabeticalOrder(entry CatalogEntry, predicate CatalogEntryFilePredicate) ([]string, error) {
 	walker, err := getSupportedWalker(entry)
 	if err != nil {
 		return nil, err
 	}
 
-	var filePaths []string
+	var filenames []string
 	err = walker.Walk(entry.Path, func(f archiver.File) error {
 		if predicate(f) {
-			filePath, err := GetFilePath(entry.Type, f)
-			if err != nil {
-				log.Error(err)
-				return nil
-			}
-
-			filePaths = append(filePaths, filePath)
+			filenames = append(filenames, f.Name())
 		}
 
 		return nil
@@ -49,18 +41,8 @@ func GetFilePathsInCatalogEntryInAlphabeticalOrder(entry CatalogEntry, predicate
 		return nil, err
 	}
 
-	sort.Slice(filePaths, func(i, j int) bool { return strings.ToLower(filePaths[i]) < strings.ToLower(filePaths[j]) })
-	return filePaths, nil
-}
-
-func GetFilePath(entryType CatalogEntryType, f archiver.File) (string, error) {
-	switch entryType {
-	case CBZ:
-		header := f.Header.(zip.FileHeader)
-		return header.Name, nil
-	default:
-		return "", ErrUnsupportedFiletype
-	}
+	sort.Slice(filenames, func(i, j int) bool { return strings.ToLower(filenames[i]) < strings.ToLower(filenames[j]) })
+	return filenames, nil
 }
 
 type CatalogEntryFilePredicate func(file archiver.File) bool

@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"github.com/disintegration/imaging"
 	"github.com/google/uuid"
 	"github.com/mholt/archiver/v3"
@@ -19,7 +20,7 @@ type GenerateCover func(e *bus.Event)
 
 var ErrEmptyCatalogEntry = errors.New("catalog entry is empty")
 
-func RegisterGenerateCover(b *bus.Bus, generateCover GenerateCover) {
+func RegisterGenerateCover(b domain.Bus, generateCover GenerateCover) {
 	handler := bus.Handler{Matcher: domain.GenerateCoverTopic, Handle: func(e *bus.Event) {
 		go generateCover(e)
 	}}
@@ -47,7 +48,7 @@ func GenerateCoverProvider(fs afero.Fs, repository domain.CatalogRepository) Gen
 			return
 		}
 
-		err = domain.ForEveryFileInCBZDo(entry, domain.OnlyImages, func(file archiver.File) error {
+		err = domain.ForEveryFileInCatalogEntryDO(entry, domain.OnlyImages, func(file archiver.File) error {
 			if file.FileInfo.Name() != coverFilenameInCatalogEntry {
 				return nil
 			}
@@ -82,13 +83,13 @@ func GenerateCoverProvider(fs afero.Fs, repository domain.CatalogRepository) Gen
 }
 
 func getNameOfCoverFile(entry domain.CatalogEntry) (string, error) {
-	filepaths, err := domain.GetFilePathsInCatalogEntryInAlphabeticalOrder(entry, domain.OnlyImages)
+	filepaths, err := domain.GetFilenamesInCatalogEntryInAlphabeticalOrder(entry, domain.OnlyImages)
 	if err != nil {
 		return "", err
 	}
 
 	if len(filepaths) == 0 {
-		return "", ErrEmptyCatalogEntry
+		return "", errors.New(fmt.Sprintf("%s :%v", entry.Name, ErrEmptyCatalogEntry))
 	}
 
 	return filepaths[0], nil

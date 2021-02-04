@@ -2,8 +2,10 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/spf13/afero"
 	"gopds/configuration"
 	"gopds/database"
+	"gopds/domain"
 	"gopds/services"
 	"gopds/web"
 )
@@ -11,6 +13,10 @@ import (
 func main() {
 	// Configuration
 	configuration.ParseFlags()
+	fs := afero.NewOsFs()
+
+	// Domain
+	bus := domain.NewBus()
 
 	// Database
 	db := database.New(configuration.GetDatabasePath())
@@ -19,7 +25,7 @@ func main() {
 	database.Migrate(db.DB.DB, configuration.GetMigrationsPath())
 	userRepository := database.NewUserRepository(db)
 	sourceRepository := database.NewSourceRepository(db)
-	catalogRepository := database.NewCatalogRepository(db)
+	catalogRepository := database.NewCatalogRepository(db, bus)
 
 	// Services
 	createUser := services.CreateUserProvider(userRepository)
@@ -42,6 +48,10 @@ func main() {
 	generateOPDSAllFeed := services.GenerateOPDSAllFeedProvider(catalogRepository)
 	generateOPDSDirectoriesFeed := services.GenerateOPDSDirectoriesFeedProvider(catalogRepository)
 	generateOPDSFeedByID := services.GenerateOPDSFeedByIDProvider(catalogRepository)
+	generateCover := services.GenerateCoverProvider(fs, catalogRepository)
+
+	// Event Handlers
+	services.RegisterGenerateCover(bus, generateCover)
 
 	// Initialization
 	adminInitializer := NewAdminInitializer(createUser, userExistsByRole)

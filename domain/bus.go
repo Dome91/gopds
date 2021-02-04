@@ -1,18 +1,26 @@
 package domain
 
 import (
+	"context"
 	"github.com/mustafaturan/bus"
 	"github.com/mustafaturan/monoton"
 	"github.com/mustafaturan/monoton/sequencer"
 )
 
+//go:generate mockgen -destination=../mock/domain/bus.go -source=bus.go
+
 const (
 	GenerateCoverTopic = "catalogEntry.generateCover"
 )
 
+type Bus interface {
+	RegisterHandler(key string, handler *bus.Handler)
+	Emit(ctx context.Context, topic string, data interface{}) (*bus.Event, error)
+}
+
 func NewBus() *bus.Bus {
 	node := uint64(1)
-	initialTime := uint64(1577865600000) // set 2020-01-01 PST as initial time
+	initialTime := uint64(1577865600000)
 	m, err := monoton.New(sequencer.NewMillisecond(), node, initialTime)
 	if err != nil {
 		panic(err)
