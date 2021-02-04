@@ -28,8 +28,8 @@ func TestGetCatalogRootDirectories(t *testing.T) {
 }
 
 func TestGetAllBooks(t *testing.T) {
-	entry1 := domain.CatalogEntry{ID: "id1", Name: "name1", IsDirectory: false}
-	entry2 := domain.CatalogEntry{ID: "id2", Name: "name2", IsDirectory: false}
+	entry1 := domain.CatalogEntry{ID: "id1", Name: "name1", IsDirectory: false, Cover: "cover1"}
+	entry2 := domain.CatalogEntry{ID: "id2", Name: "name2", IsDirectory: false, Cover: "cover1"}
 
 	fetchAllBooksInPage := func(page int, pageSize int) ([]domain.CatalogEntry, error) {
 		assert.Equal(t, 0, page)
@@ -119,4 +119,5 @@ func assertCatalogEntryResponse(t *testing.T, entry domain.CatalogEntry, respons
 	assert.Equal(t, entry.ID, response.ID)
 	assert.Equal(t, entry.Name, response.Name)
 	assert.Equal(t, entry.IsDirectory, response.IsDirectory)
+	assert.Equal(t, entry.Cover, response.Cover)
 }
