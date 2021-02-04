@@ -18,7 +18,7 @@ describe('CatalogComponent', () => {
   let catalogService: SpyObj<CatalogService>;
   let router: SpyObj<Router>;
 
-  let catalogEntriesInPage = new CatalogEntriesInPage(48, [new CatalogEntry('id2', 'name2', true, ""), new CatalogEntry('id3', 'name3', false, "CBZ")]);
+  let catalogEntriesInPage = new CatalogEntriesInPage(48, [new CatalogEntry('id2', 'name2', true, "", "cover1"), new CatalogEntry('id3', 'name3', false, "CBZ", "cover2")]);
 
   beforeEach(async () => {
     catalogService = createSpyObj<CatalogService>(['fetchInPage']);

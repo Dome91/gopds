@@ -4,7 +4,10 @@ export class CatalogEntriesInPage {
 }
 
 export class CatalogEntry {
-  constructor(public id: string, public name: string, public isDirectory: boolean, public type: string) {
+  constructor(public id: string, public name: string, public isDirectory: boolean, public type: string, public cover: string) {
   }
 
+  public static empty(): CatalogEntry {
+    return new CatalogEntry('', '', true, "", "");
+  }
 }

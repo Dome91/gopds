@@ -23,8 +23,8 @@ describe('CatalogService', () => {
   });
 
   it('should fetch catalog entries in page', () => {
-    const entry1 = new CatalogEntry('id1', 'name1', true, "");
-    const entry2 = new CatalogEntry('id2', 'name2', false, "CBZ");
+    const entry1 = new CatalogEntry('id1', 'name1', true, "", "");
+    const entry2 = new CatalogEntry('id2', 'name2', false, "CBZ", "cover1");
 
     service.fetchInPage(0, 24, 'id1').subscribe(
       (response: CatalogEntriesInPage) => {

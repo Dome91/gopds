@@ -10,19 +10,36 @@ import {CatalogEntry} from "../../models/catalog";
 export class CatalogEntryComponent implements OnInit {
 
   @Input() catalogEntry: CatalogEntry;
-  downloadLink: string;
+  downloadURL: string;
+  coverURL: string;
   faDownload = faDownload;
 
   constructor() {
-    this.catalogEntry = new CatalogEntry('', '', true, "");
-    this.downloadLink = '';
+    this.catalogEntry = CatalogEntry.empty();
+    this.downloadURL = '';
+    this.coverURL = '';
   }
 
   ngOnInit(): void {
+    this.determineDownloadURL();
+    this.determineCoverURL();
+  }
+
+  private determineDownloadURL() {
     if (isDevMode()) {
-      this.downloadLink = `http://localhost:3000/api/v1/catalog/${this.catalogEntry.id}/download`;
+      this.downloadURL = `http://localhost:3000/api/v1/catalog/${this.catalogEntry.id}/download`;
     } else {
-      this.downloadLink = `api/v1/catalog/${this.catalogEntry.id}/download`;
+      this.downloadURL = `api/v1/catalog/${this.catalogEntry.id}/download`;
+    }
+  }
+
+  private determineCoverURL() {
+    if (this.catalogEntry.cover === '') {
+      this.coverURL = "assets/card.svg";
+    } else if (isDevMode()) {
+      this.coverURL = `http://localhost:3000/covers/${this.catalogEntry.cover}`;
+    } else {
+      this.coverURL = `covers/${this.catalogEntry.cover}`;
     }
   }
 

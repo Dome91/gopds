@@ -1,10 +1,10 @@
 <div class="card">
-  <img alt="{{catalogEntry.name}} Cover" class="card-img" id="cover-{{catalogEntry.name}}" src="assets/card.svg">
+  <img alt="{{catalogEntry.name}} Cover" class="card-img" id="cover-{{catalogEntry.name}}" [src]="coverURL">
   <div class="card-img-overlay d-flex align-items-end">
     <div class="bottom-img-overlay pr-2 pl-2 pr-lg-3 pl-lg-3">
-      <h5 class="card-title box-text-shadow">{{catalogEntry.name}}</h5>
+      <div class="card-title box-text-shadow">{{catalogEntry.name}}</div>
       <div *ngIf="!catalogEntry.isDirectory" class="catalog-entry-action-icons">
-        <a [href]="downloadLink">
+        <a [href]="downloadURL">
           <fa-icon size="lg" [icon]="faDownload"></fa-icon>
         </a>
       </div>
