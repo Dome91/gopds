@@ -9,6 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gopds/configuration"
 	"net/http"
+	"path"
 )
 
 type Handler interface {
@@ -29,6 +30,7 @@ func NewServer(authorization *Authorization, handlers ...Handler) *Server {
 		handler.Register(app, authorization)
 	}
 
+	serveCovers(app)
 	serveUI(app)
 	return &Server{app: app}
 }
@@ -38,6 +40,12 @@ func (s *Server) Start() {
 	if err != nil {
 		log.Warn(err)
 	}
+}
+
+func serveCovers(app *fiber.App) {
+	app.Use("/covers/*", filesystem.New(filesystem.Config{
+		Root: http.Dir(path.Join("data")),
+	}))
 }
 
 func serveUI(app *fiber.App) {
