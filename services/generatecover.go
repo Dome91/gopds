@@ -48,7 +48,7 @@ func GenerateCoverProvider(fs afero.Fs, repository domain.CatalogRepository) Gen
 			return
 		}
 
-		err = domain.ForEveryFileInCatalogEntryDO(entry, domain.OnlyImages, func(file archiver.File) error {
+		err = domain.ForEveryFileInCatalogEntryDo(entry, domain.OnlyImages, func(file archiver.File) error {
 			if file.FileInfo.Name() != coverFilenameInCatalogEntry {
 				return nil
 			}

@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ForEveryFileInCatalogEntryDO(entry CatalogEntry, predicate CatalogEntryFilePredicate, consumer func(file archiver.File) error) error {
+func ForEveryFileInCatalogEntryDo(entry CatalogEntry, predicate CatalogEntryFilePredicate, consumer func(file archiver.File) error) error {
 	walker, err := getSupportedWalker(entry)
 	if err != nil {
 		return err
