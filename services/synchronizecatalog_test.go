@@ -5,6 +5,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopds/domain"
 	mock_domain "gopds/mock/domain"
+	mock_util "gopds/mock/util"
+	"gopds/util"
 	"path/filepath"
 	"testing"
 )
@@ -39,7 +41,16 @@ func TestSynchronizeCatalog(t *testing.T) {
 			return nil
 		})
 
-		err = SynchronizeCatalogProvider(sourceRepository, catalogRepository)(sourceID)
+		catalogRepository.EXPECT().FindAllBooksWithoutCover().DoAndReturn(func() ([]domain.CatalogEntry, error) {
+			savedSouthEpub := southEpub
+			savedSouthEpub.ID = "id1"
+			return []domain.CatalogEntry{savedSouthEpub}, nil
+		})
+
+		bus := mock_util.NewMockBus(controller)
+		bus.EXPECT().Emit(gomock.Any(), util.GenerateCoverTopic, gomock.AssignableToTypeOf(util.GenerateCoverEvent{})).Times(1)
+
+		err = SynchronizeCatalogProvider(sourceRepository, catalogRepository, bus)(sourceID)
 		assert.Nil(t, err)
 	})
 }

@@ -3,6 +3,7 @@ package services
 import (
 	log "github.com/sirupsen/logrus"
 	"gopds/domain"
+	"gopds/util"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -10,7 +11,7 @@ import (
 
 type SynchronizeCatalog func(sourceID string) error
 
-func SynchronizeCatalogProvider(sourceRepository domain.SourceRepository, catalogRepository domain.CatalogRepository) SynchronizeCatalog {
+func SynchronizeCatalogProvider(sourceRepository domain.SourceRepository, catalogRepository domain.CatalogRepository, bus util.Bus) SynchronizeCatalog {
 	return func(sourceID string) error {
 		source, err := sourceRepository.FindByID(sourceID)
 		if err != nil {
@@ -23,7 +24,17 @@ func SynchronizeCatalogProvider(sourceRepository domain.SourceRepository, catalo
 		}
 
 		catalog := domain.Catalog{Root: root, SourceID: sourceID}
-		return catalogRepository.Save(catalog)
+		err = catalogRepository.Save(catalog)
+		if err != nil {
+			return err
+		}
+
+		booksWithoutCover, err := catalogRepository.FindAllBooksWithoutCover()
+		if err != nil {
+			return err
+		}
+		domain.SendGenerateCoverEvents(booksWithoutCover, bus)
+		return nil
 	}
 }
 

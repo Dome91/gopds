@@ -10,19 +10,23 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"gopds/domain"
+	"gopds/util"
 	"image"
 	"image/jpeg"
 	"io"
 	"path"
 )
 
+const coverPixelThreshold = 6000 * 6000 // ~140Mb
+
 type GenerateCover func(e *bus.Event)
 
 var ErrEmptyCatalogEntry = errors.New("catalog entry is empty")
 
-func RegisterGenerateCover(b domain.Bus, generateCover GenerateCover) {
-	handler := bus.Handler{Matcher: domain.GenerateCoverTopic, Handle: func(e *bus.Event) {
-		go generateCover(e)
+func RegisterGenerateCover(b util.Bus, generateCover GenerateCover, pool *util.Pool) {
+	pool.SetFunc(generateCover)
+	handler := bus.Handler{Matcher: util.GenerateCoverTopic, Handle: func(e *bus.Event) {
+		pool.Consume(e)
 	}}
 
 	b.RegisterHandler("GenerateCoverHandler", &handler)
@@ -30,7 +34,7 @@ func RegisterGenerateCover(b domain.Bus, generateCover GenerateCover) {
 
 func GenerateCoverProvider(fs afero.Fs, repository domain.CatalogRepository) GenerateCover {
 	return func(e *bus.Event) {
-		event, ok := e.Data.(domain.GenerateCoverEvent)
+		event, ok := e.Data.(util.GenerateCoverEvent)
 		if !ok {
 			log.Error("malformed event body. Expected GenerateCoverEvent")
 			return
@@ -42,44 +46,69 @@ func GenerateCoverProvider(fs afero.Fs, repository domain.CatalogRepository) Gen
 			return
 		}
 
-		coverFilenameInCatalogEntry, err := getNameOfCoverFile(entry)
-		if err != nil {
-			log.Error(err)
-			return
+		switch entry.Type {
+		case domain.CBZ:
+			generateCoverForCBZ(entry, repository, fs)
 		}
-
-		err = domain.ForEveryFileInCatalogEntryDo(entry, domain.OnlyImages, func(file archiver.File) error {
-			if file.FileInfo.Name() != coverFilenameInCatalogEntry {
-				return nil
-			}
-
-			cover, err := resizeImage(file, 800)
-			if err != nil {
-				return err
-			}
-
-			filename, err := saveCover(cover, fs)
-			if err != nil {
-				return err
-			}
-
-			entry.Cover = filename
-			return archiver.ErrStopWalk
-		})
-
-		if err != nil {
-			log.Error(err)
-			return
-		}
-
-		err = repository.UpdateSetCoverByID(entry.ID, entry.Cover)
-		if err != nil {
-			log.Error(err)
-			return
-		}
-
-		log.Infof("generated cover for %s", entry.Name)
 	}
+}
+
+func generateCoverForCBZ(entry domain.CatalogEntry, repository domain.CatalogRepository, fs afero.Fs) {
+	coverFilenameInCatalogEntry, err := getNameOfCoverFile(entry)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	err = checkIfCoverIsTooLargeToBeProcessed(entry, coverFilenameInCatalogEntry)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	err = domain.ForEveryFileInCatalogEntry(entry, domain.ImageWithName(coverFilenameInCatalogEntry), func(file archiver.File) error {
+		cover, err := resizeImage(file, 800)
+		if err != nil {
+			return err
+		}
+
+		filename, err := saveCover(cover, fs)
+		if err != nil {
+			return err
+		}
+
+		entry.Cover = filename
+		return archiver.ErrStopWalk
+	})
+
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	err = repository.UpdateSetCoverByID(entry.ID, entry.Cover)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	log.Infof("generated cover for %s", entry.Name)
+}
+
+func checkIfCoverIsTooLargeToBeProcessed(entry domain.CatalogEntry, coverFilenameInCatalogEntry string) error {
+	return domain.ForEveryFileInCatalogEntry(entry, domain.ImageWithName(coverFilenameInCatalogEntry), func(file archiver.File) error {
+		config, _, err := image.DecodeConfig(file)
+		if err != nil {
+			return err
+		}
+
+		numPixels := config.Height * config.Width
+		if coverPixelThreshold < numPixels {
+			return errors.New("cover too large to be processed")
+		}
+
+		return nil
+	})
 }
 
 func getNameOfCoverFile(entry domain.CatalogEntry) (string, error) {

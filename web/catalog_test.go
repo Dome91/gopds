@@ -8,8 +8,10 @@ import (
 	"testing"
 )
 
+type CatalogHandlerOption func(c *CatalogHandler)
+
 func TestGetCatalogRootDirectories(t *testing.T) {
-	handler := NewCatalogHandler(nil, nil, nil, nil, nil, nil)
+	handler := &CatalogHandler{}
 	response, err := send(handler, "/api/v1/catalog", http.MethodGet, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, response.StatusCode)
@@ -41,7 +43,7 @@ func TestGetAllBooks(t *testing.T) {
 		return 20, nil
 	}
 
-	handler := NewCatalogHandler(fetchAllBooksInPage, countAllBooks, nil, nil, nil, nil)
+	handler := &CatalogHandler{FetchAllBooksInPage: fetchAllBooksInPage, CountBooks: countAllBooks}
 	response, err := send(handler, "/api/v1/catalog?id=all", http.MethodGet, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, response.StatusCode)
@@ -58,9 +60,11 @@ func TestGetRootDirectories(t *testing.T) {
 	dir1 := domain.CatalogEntry{ID: "id1", Name: "name1", IsDirectory: true}
 	dir2 := domain.CatalogEntry{ID: "id2", Name: "name2", IsDirectory: true}
 
-	handler := NewCatalogHandler(nil, nil, func() ([]domain.CatalogEntry, error) {
+	fetchCatalogRootDirectories := func() ([]domain.CatalogEntry, error) {
 		return []domain.CatalogEntry{dir1, dir2}, nil
-	}, nil, nil, nil)
+	}
+
+	handler := &CatalogHandler{FetchCatalogRootDirectories: fetchCatalogRootDirectories}
 	response, err := send(handler, "/api/v1/catalog?id=directories", http.MethodGet, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, response.StatusCode)
@@ -88,7 +92,7 @@ func TestGetPageByID(t *testing.T) {
 		return 20, nil
 	}
 
-	handler := NewCatalogHandler(nil, nil, nil, fetchCatalogEntriesByParentCatalogEntryIDInPage, countCatalogEntriesByParentCatalogEntryID, nil)
+	handler := &CatalogHandler{FetchCatalogEntriesByParentCatalogEntryIDInPage: fetchCatalogEntriesByParentCatalogEntryIDInPage, CountCatalogEntriesByParentCatalogEntryID: countCatalogEntriesByParentCatalogEntryID}
 	response, err := send(handler, "/api/v1/catalog?id=id", http.MethodGet, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, response.StatusCode)
@@ -106,8 +110,8 @@ func TestCatalogDownload(t *testing.T) {
 		assert.Equal(t, "id1", id)
 		return domain.CatalogEntry{Name: "South", Path: "../test/ebooks/epub/South.epub"}, nil
 	}
-	handler := NewCatalogHandler(nil, nil, nil, nil, nil, fetchCatalogEntryByID)
 
+	handler := &CatalogHandler{FetchCatalogEntryByID: fetchCatalogEntryByID}
 	response, err := send(handler, "/api/v1/catalog/id1/download", http.MethodGet, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, response.StatusCode)

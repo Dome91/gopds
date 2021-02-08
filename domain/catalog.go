@@ -1,7 +1,10 @@
 package domain
 
 import (
+	"context"
 	"errors"
+	log "github.com/sirupsen/logrus"
+	"gopds/util"
 	"path/filepath"
 )
 
@@ -61,6 +64,7 @@ type CatalogRepository interface {
 	FindAllByParentCatalogEntryID(parentCatalogEntryID string) ([]CatalogEntry, error)
 	FindAllByParentCatalogEntryIDInPage(parentCatalogEntryID string, page int, pageSize int) ([]CatalogEntry, error)
 	FindAllBooksInPage(page int, pageSize int) ([]CatalogEntry, error)
+	FindAllBooksWithoutCover() ([]CatalogEntry, error)
 	CountBooks() (int, error)
 	CountByParentCatalogEntryID(parentCatalogEntryID string) (int, error)
 	UpdateSetCoverByID(id string, cover string) error
@@ -102,5 +106,14 @@ func GetMimeType(entryType CatalogEntryType) CatalogEntryMIMEType {
 		return MimeMobi
 	default:
 		return ""
+	}
+}
+
+func SendGenerateCoverEvents(books []CatalogEntry, bus util.Bus) {
+	for _, book := range books {
+		_, err := bus.Emit(context.Background(), util.GenerateCoverTopic, util.GenerateCoverEvent{ID: book.ID})
+		if err != nil {
+			log.Error(err)
+		}
 	}
 }

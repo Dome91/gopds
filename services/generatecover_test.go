@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gopds/domain"
 	mock_domain "gopds/mock/domain"
+	"gopds/util"
 	"image"
 	"os"
 	"path/filepath"
@@ -38,7 +39,7 @@ func TestGenerateCoverForCBZ(t *testing.T) {
 		err := fs.MkdirAll("data/covers", os.ModePerm)
 		assert.Nil(t, err)
 
-		GenerateCoverProvider(fs, repository)(&bus.Event{Data: domain.GenerateCoverEvent{ID: entry.ID}})
+		GenerateCoverProvider(fs, repository)(&bus.Event{Data: util.GenerateCoverEvent{ID: entry.ID}})
 
 		coverFile, err := fs.Open("data/covers/" + generatedCover)
 		require.Nil(t, err)

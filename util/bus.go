@@ -1,4 +1,4 @@
-package domain
+package util
 
 import (
 	"context"
@@ -7,10 +7,11 @@ import (
 	"github.com/mustafaturan/monoton/sequencer"
 )
 
-//go:generate mockgen -destination=../mock/domain/bus.go -source=bus.go
+//go:generate mockgen -destination=../mock/util/bus.go -source=bus.go
 
 const (
-	GenerateCoverTopic = "catalogEntry.generateCover"
+	GenerateCoverTopic   = "catalogEntry.generateCover"
+	ExtractMetadataTopic = "catalogEntry.extractMetadata"
 )
 
 type Bus interface {
@@ -41,5 +42,9 @@ func NewBus() *bus.Bus {
 }
 
 type GenerateCoverEvent struct {
+	ID string
+}
+
+type ExtractMetadataEvent struct {
 	ID string
 }
