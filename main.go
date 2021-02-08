@@ -5,8 +5,8 @@ import (
 	"github.com/spf13/afero"
 	"gopds/configuration"
 	"gopds/database"
-	"gopds/domain"
 	"gopds/services"
+	"gopds/util"
 	"gopds/web"
 )
 
@@ -16,7 +16,7 @@ func main() {
 	fs := afero.NewOsFs()
 
 	// Domain
-	bus := domain.NewBus()
+	bus := util.NewBus()
 
 	// Database
 	db := database.New(configuration.GetDatabasePath())
@@ -25,7 +25,7 @@ func main() {
 	database.Migrate(db.DB.DB, configuration.GetMigrationsPath())
 	userRepository := database.NewUserRepository(db)
 	sourceRepository := database.NewSourceRepository(db)
-	catalogRepository := database.NewCatalogRepository(db, bus)
+	catalogRepository := database.NewCatalogRepository(db)
 
 	// Services
 	createUser := services.CreateUserProvider(userRepository)
@@ -43,7 +43,7 @@ func main() {
 	fetchAllBooksInPage := services.FetchAllBooksInPageProvider(catalogRepository)
 	countBooks := services.CountBooksProvider(catalogRepository)
 	countCatalogEntriesByParentCatalogEntryID := services.CountCatalogEntriesByParentCatalogEntryIDProvider(catalogRepository)
-	synchronizeCatalog := services.SynchronizeCatalogProvider(sourceRepository, catalogRepository)
+	synchronizeCatalog := services.SynchronizeCatalogProvider(sourceRepository, catalogRepository, bus)
 	generateOPDSRootFeed := services.GenerateOPDSRootFeedProvider()
 	generateOPDSAllFeed := services.GenerateOPDSAllFeedProvider(catalogRepository)
 	generateOPDSDirectoriesFeed := services.GenerateOPDSDirectoriesFeedProvider(catalogRepository)
@@ -51,7 +51,9 @@ func main() {
 	generateCover := services.GenerateCoverProvider(fs, catalogRepository)
 
 	// Event Handlers
-	services.RegisterGenerateCover(bus, generateCover)
+	generateCoversPool := util.NewPool(util.DefaultNumWorkers, util.DefaultBufferSize)
+	defer generateCoversPool.Close()
+	services.RegisterGenerateCover(bus, generateCover, generateCoversPool)
 
 	// Initialization
 	adminInitializer := NewAdminInitializer(createUser, userExistsByRole)

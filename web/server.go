@@ -1,6 +1,7 @@
 package web
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
@@ -9,6 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gopds/configuration"
 	"net/http"
+	"os"
+	"os/signal"
 	"path"
 )
 
@@ -36,6 +39,14 @@ func NewServer(authorization *Authorization, handlers ...Handler) *Server {
 }
 
 func (s *Server) Start() {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		_ = <-c
+		fmt.Println("Shutting down GOPDS...")
+		_ = s.app.Shutdown()
+	}()
+
 	err := s.app.Listen(configuration.Address + ":" + configuration.Port)
 	if err != nil {
 		log.Warn(err)
