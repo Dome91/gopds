@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func ForEveryFileInCatalogEntryDo(entry CatalogEntry, predicate CatalogEntryFilePredicate, consumer func(file archiver.File) error) error {
+func ForEveryFileInCatalogEntry(entry CatalogEntry, predicate CatalogEntryFilePredicate, consumer func(file archiver.File) error) error {
 	walker, err := getSupportedWalker(entry)
 	if err != nil {
 		return err
@@ -47,6 +47,12 @@ func GetFilenamesInCatalogEntryInAlphabeticalOrder(entry CatalogEntry, predicate
 
 type CatalogEntryFilePredicate func(file archiver.File) bool
 
+func WithName(name string) CatalogEntryFilePredicate {
+	return func(file archiver.File) bool {
+		return name == file.Name()
+	}
+}
+
 func IsImage(file archiver.File) bool {
 	extension := filepath.Ext(file.FileInfo.Name())
 	return extension == ".jpg" || extension == ".jpeg" || extension == ".png"
@@ -70,6 +76,12 @@ func And(p1 CatalogEntryFilePredicate, p2 CatalogEntryFilePredicate) CatalogEntr
 
 func OnlyImages(file archiver.File) bool {
 	return And(Not(IsDirectory), IsImage)(file)
+}
+
+func ImageWithName(name string) CatalogEntryFilePredicate {
+	return func(file archiver.File) bool {
+		return And(WithName(name), OnlyImages)(file)
+	}
 }
 
 func getSupportedWalker(entry CatalogEntry) (archiver.Walker, error) {
