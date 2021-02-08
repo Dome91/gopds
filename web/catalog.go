@@ -14,12 +14,12 @@ const (
 )
 
 type CatalogHandler struct {
-	fetchAllBooksInPage                             services.FetchAllBooksInPage
-	countBooks                                      services.CountBooks
-	fetchCatalogRootDirectories                     services.FetchCatalogRootDirectories
-	fetchCatalogEntriesByParentCatalogEntryIDInPage services.FetchCatalogEntriesByParentCatalogEntryIDInPage
-	countCatalogEntriesByParentCatalogEntryID       services.CountCatalogEntriesByParentCatalogEntryID
-	fetchCatalogEntryByID                           services.FetchCatalogEntryByID
+	FetchAllBooksInPage                             services.FetchAllBooksInPage
+	CountBooks                                      services.CountBooks
+	FetchCatalogRootDirectories                     services.FetchCatalogRootDirectories
+	FetchCatalogEntriesByParentCatalogEntryIDInPage services.FetchCatalogEntriesByParentCatalogEntryIDInPage
+	CountCatalogEntriesByParentCatalogEntryID       services.CountCatalogEntriesByParentCatalogEntryID
+	FetchCatalogEntryByID                           services.FetchCatalogEntryByID
 }
 
 func NewCatalogHandler(
@@ -31,12 +31,12 @@ func NewCatalogHandler(
 	fetchCatalogEntryByID services.FetchCatalogEntryByID,
 ) *CatalogHandler {
 	return &CatalogHandler{
-		fetchAllBooksInPage:         fetchAllBooksInPage,
-		countBooks:                  countBooks,
-		fetchCatalogRootDirectories: fetchCatalogRootDirectories,
-		fetchCatalogEntriesByParentCatalogEntryIDInPage: fetchCatalogEntriesByParentCatalogEntryIDInPage,
-		countCatalogEntriesByParentCatalogEntryID:       countCatalogEntriesByParentCatalogEntryID,
-		fetchCatalogEntryByID:                           fetchCatalogEntryByID,
+		FetchAllBooksInPage:         fetchAllBooksInPage,
+		CountBooks:                  countBooks,
+		FetchCatalogRootDirectories: fetchCatalogRootDirectories,
+		FetchCatalogEntriesByParentCatalogEntryIDInPage: fetchCatalogEntriesByParentCatalogEntryIDInPage,
+		CountCatalogEntriesByParentCatalogEntryID:       countCatalogEntriesByParentCatalogEntryID,
+		FetchCatalogEntryByID:                           fetchCatalogEntryByID,
 	}
 }
 
@@ -84,12 +84,12 @@ func (c *CatalogHandler) getPageByID(ctx *fiber.Ctx, id string, page int, pageSi
 		return c.getRootDirectories(ctx)
 	}
 
-	entries, err := c.fetchCatalogEntriesByParentCatalogEntryIDInPage(id, page, pageSize)
+	entries, err := c.FetchCatalogEntriesByParentCatalogEntryIDInPage(id, page, pageSize)
 	if err != nil {
 		return err
 	}
 
-	count, err := c.countCatalogEntriesByParentCatalogEntryID(id)
+	count, err := c.CountCatalogEntriesByParentCatalogEntryID(id)
 	if err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func (c *CatalogHandler) getPageByID(ctx *fiber.Ctx, id string, page int, pageSi
 }
 
 func (c *CatalogHandler) getRootDirectories(ctx *fiber.Ctx) error {
-	directories, err := c.fetchCatalogRootDirectories()
+	directories, err := c.FetchCatalogRootDirectories()
 	if err != nil {
 		return err
 	}
@@ -113,12 +113,12 @@ func (c *CatalogHandler) getRootDirectories(ctx *fiber.Ctx) error {
 }
 
 func (c *CatalogHandler) getAllBooks(ctx *fiber.Ctx, page int, pageSize int) error {
-	booksInPage, err := c.fetchAllBooksInPage(page, pageSize)
+	booksInPage, err := c.FetchAllBooksInPage(page, pageSize)
 	if err != nil {
 		return err
 	}
 
-	count, err := c.countBooks()
+	count, err := c.CountBooks()
 	if err != nil {
 		return err
 	}
@@ -135,7 +135,7 @@ func (c *CatalogHandler) download(ctx *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	catalogEntry, err := c.fetchCatalogEntryByID(id)
+	catalogEntry, err := c.FetchCatalogEntryByID(id)
 	if err != nil {
 		return err
 	}
