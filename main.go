@@ -15,7 +15,7 @@ func main() {
 	configuration.ParseFlags()
 	fs := afero.NewOsFs()
 
-	// Domain
+	// Util
 	bus := util.NewBus()
 
 	// Database
