@@ -1,0 +1,16 @@
+<feed>
+    <id>GOPDS</id>
+    <title>Root</title>
+    <entry>
+        <id>all</id>
+        <title>All Catalog Entries</title>
+        <link href="/opds/all" rel="http://opds-spec.org/crawlable" type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+    </entry>
+    <entry>
+        <id>directories</id>
+        <title>Catalog Directories</title>
+        <link href="/opds/directories" rel="http://opds-spec.org/crawlable" type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+    </entry>
+    <link href="/opds" rel="start" type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+    <link href="/opds/" rel="self" type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+</feed>

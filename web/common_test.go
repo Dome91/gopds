@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"
+	"gopds/database"
 	"gopds/domain"
 	"io/ioutil"
 	"net/http"
@@ -38,4 +39,10 @@ func parseResponse(t *testing.T, response *http.Response, body interface{}) {
 
 	err = json.Unmarshal(bodyBytes, body)
 	assert.Nil(t, err)
+}
+
+func withDB(f func(db *database.DB)) {
+	db := database.New(":memory:")
+	database.Migrate(db.DB.DB, "../migrations")
+	f(db)
 }

@@ -1,0 +1,16 @@
+<feed>
+    <id>GOPDS</id>
+    <title>All Catalog Entries</title>
+    <entry>
+        <id>id2</id>
+        <title>file1.cbz</title>
+        <link href="/opds/id2/download" rel="http://opds-spec.org/acquisition/" type="application/vnd.comicbook+zip"/>
+    </entry>
+    <entry>
+        <id>id3</id>
+        <title>file2.epub</title>
+        <link href="/opds/id3/download" rel="http://opds-spec.org/acquisition/" type="application/epub+zip"/>
+    </entry>
+    <link href="/opds" rel="start" type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+    <link href="/opds/all" rel="self" type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+</feed>

@@ -2,6 +2,10 @@ package database
 
 import "github.com/jmoiron/sqlx"
 
+type IDGenerator interface {
+	Generate() string
+}
+
 type DB struct {
 	*sqlx.DB
 }
@@ -12,7 +16,7 @@ func New(dataSourceName string) *DB {
 	return &DB{db}
 }
 
-func (db *DB) inTransaction(f func (tx *sqlx.Tx) error) error {
+func (db *DB) inTransaction(f func(tx *sqlx.Tx) error) error {
 	tx, err := db.Beginx()
 	if err != nil {
 		tx.Rollback()

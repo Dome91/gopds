@@ -12,7 +12,7 @@ import (
 )
 
 func TestSynchronizeCatalog(t *testing.T) {
-	path, err := filepath.Abs("../test")
+	path, err := filepath.Abs("../test/books")
 	assert.Nil(t, err)
 
 	southEpub := domain.CatalogEntry{Name: "South.epub", Path: filepath.Join(path, "ebooks", "epub", "South.epub"), IsDirectory: false, Type: domain.EPUB, Children: []domain.CatalogEntry(nil)}
@@ -26,7 +26,7 @@ func TestSynchronizeCatalog(t *testing.T) {
 	cbz := domain.CatalogEntry{Name: "cbz", Path: filepath.Join(path, "comics", "cbz"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{comic1}}
 	comics := domain.CatalogEntry{Name: "comics", Path: filepath.Join(path, "comics"), IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{cbz}}
 
-	root := domain.CatalogEntry{Name: "test", Path: path, IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{comics, ebooks}}
+	root := domain.CatalogEntry{Name: "books", Path: path, IsDirectory: true, Type: domain.DIRECTORY, Children: []domain.CatalogEntry{comics, ebooks}}
 
 	withMock(t, func(controller *gomock.Controller) {
 		sourceID := "sourceID"

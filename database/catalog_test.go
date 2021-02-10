@@ -4,6 +4,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"gopds/domain"
+	"gopds/util"
 	"testing"
 )
 
@@ -11,7 +12,7 @@ func TestCatalogRepository_Save(t *testing.T) {
 	withDBAndMock(t, func(db *DB, ctrl *gomock.Controller) {
 		book1, book2, book3, ebooks, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -70,7 +71,7 @@ func TestCatalogRepository_FindAllBooks(t *testing.T) {
 	withDB(func(db *DB) {
 		book1, book2, _, _, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -93,7 +94,7 @@ func TestCatalogRepository_FindAllBooks(t *testing.T) {
 func TestCatalogRepository_FindByID(t *testing.T) {
 	withDB(func(db *DB) {
 		_, _, _, _, catalog := generateCatalog(db)
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -112,7 +113,7 @@ func TestCatalogRepository_FindAllRootDirectories(t *testing.T) {
 	withDB(func(db *DB) {
 		_, _, _, ebooks, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -130,7 +131,7 @@ func TestCatalogRepository_FindAllByParentCatalogEntryID(t *testing.T) {
 	withDB(func(db *DB) {
 		book1, book2, _, _, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -153,7 +154,7 @@ func TestCatalogRepository_FindAllByParentCatalogEntryIDInPage(t *testing.T) {
 	withDB(func(db *DB) {
 		book1, _, _, _, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -174,7 +175,7 @@ func TestCatalogRepository_FindAllBooksInPage(t *testing.T) {
 	withDB(func(db *DB) {
 		book1, _, _, _, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -190,7 +191,7 @@ func TestCatalogRepository_CountBooks(t *testing.T) {
 	withDB(func(db *DB) {
 		_, _, _, _, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -204,7 +205,7 @@ func TestCatalogRepository_CountByParentCatalogEntryID(t *testing.T) {
 	withDB(func(db *DB) {
 		_, _, _, _, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -222,7 +223,7 @@ func TestCatalogRepository_UpdateSetCoverByID(t *testing.T) {
 	withDB(func(db *DB) {
 		_, _, _, _, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 
@@ -244,7 +245,7 @@ func TestCatalogRepository_FindAllBooksWithoutCover(t *testing.T) {
 	withDB(func(db *DB) {
 		book1, book2, _, _, catalog := generateCatalog(db)
 
-		repository := NewCatalogRepository(db)
+		repository := NewCatalogRepository(db, util.NewUUIDGenerator())
 		err := repository.Save(catalog)
 		assert.Nil(t, err)
 

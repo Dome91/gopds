@@ -25,7 +25,7 @@ func main() {
 	database.Migrate(db.DB.DB, configuration.GetMigrationsPath())
 	userRepository := database.NewUserRepository(db)
 	sourceRepository := database.NewSourceRepository(db)
-	catalogRepository := database.NewCatalogRepository(db)
+	catalogRepository := database.NewCatalogRepository(db, util.NewUUIDGenerator())
 
 	// Services
 	createUser := services.CreateUserProvider(userRepository)

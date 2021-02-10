@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
 	"gopds/domain"
@@ -10,11 +9,12 @@ import (
 )
 
 type CatalogRepository struct {
-	db *DB
+	db          *DB
+	idGenerator IDGenerator
 }
 
-func NewCatalogRepository(db *DB) *CatalogRepository {
-	return &CatalogRepository{db: db}
+func NewCatalogRepository(db *DB, idGenerator IDGenerator) *CatalogRepository {
+	return &CatalogRepository{db: db, idGenerator: idGenerator}
 }
 
 func (c *CatalogRepository) Save(catalog domain.Catalog) error {
@@ -24,27 +24,27 @@ func (c *CatalogRepository) Save(catalog domain.Catalog) error {
 			return err
 		}
 
-		saveCatalogEntry(tx, catalog.Root, sql.NullString{Valid: false}, catalog.SourceID)
+		c.saveCatalogEntry(tx, catalog.Root, sql.NullString{Valid: false}, catalog.SourceID)
 		_, err = tx.Exec("delete from catalog_entries where found_during_last_sync = false")
 		return err
 	})
 }
-func saveCatalogEntry(tx *sqlx.Tx, entry domain.CatalogEntry, parentID sql.NullString, sourceID string) {
+func (c *CatalogRepository) saveCatalogEntry(tx *sqlx.Tx, entry domain.CatalogEntry, parentID sql.NullString, sourceID string) {
 	var entity catalogEntryEntity
 	err := tx.Get(&entity, "select * from catalog_entries where path = $1", entry.Path)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			insertCatalogEntry(tx, entry, parentID, sourceID)
+			c.insertCatalogEntry(tx, entry, parentID, sourceID)
 		} else {
 			log.Errorf("get catalog entry by path failed: %s", err.Error())
 			return
 		}
 	} else {
-		updateCatalogEntry(tx, entity, entry.Children)
+		c.updateCatalogEntry(tx, entity, entry.Children)
 	}
 }
 
-func updateCatalogEntry(tx *sqlx.Tx, entity catalogEntryEntity, children []domain.CatalogEntry) {
+func (c *CatalogRepository) updateCatalogEntry(tx *sqlx.Tx, entity catalogEntryEntity, children []domain.CatalogEntry) {
 	_, err := tx.Exec("update catalog_entries set found_during_last_sync = true where path = $1", entity.Path)
 	if err != nil {
 		log.Errorf("update found_during_last_sync to true for path %s failed: %s", entity.Path, err.Error())
@@ -52,12 +52,12 @@ func updateCatalogEntry(tx *sqlx.Tx, entity catalogEntryEntity, children []domai
 	}
 
 	for _, child := range children {
-		saveCatalogEntry(tx, child, sql.NullString{String: entity.ID, Valid: true}, entity.SourceID)
+		c.saveCatalogEntry(tx, child, sql.NullString{String: entity.ID, Valid: true}, entity.SourceID)
 	}
 }
 
-func insertCatalogEntry(tx *sqlx.Tx, entry domain.CatalogEntry, parentID sql.NullString, sourceID string) {
-	id := uuid.New().String()
+func (c *CatalogRepository) insertCatalogEntry(tx *sqlx.Tx, entry domain.CatalogEntry, parentID sql.NullString, sourceID string) {
+	id := c.idGenerator.Generate()
 	_, err := tx.Exec(
 		"insert into catalog_entries(id, name, path, is_directory, type, parent_catalog_entry, source) values ($1, $2, $3, $4, $5, $6, $7)",
 		id, entry.Name, entry.Path, entry.IsDirectory, entry.Type, parentID, sourceID)
@@ -69,7 +69,7 @@ func insertCatalogEntry(tx *sqlx.Tx, entry domain.CatalogEntry, parentID sql.Nul
 
 	log.Infof("synced %s", entry.Name)
 	for _, child := range entry.Children {
-		saveCatalogEntry(tx, child, sql.NullString{String: id, Valid: true}, sourceID)
+		c.saveCatalogEntry(tx, child, sql.NullString{String: id, Valid: true}, sourceID)
 	}
 }
 

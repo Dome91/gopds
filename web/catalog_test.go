@@ -8,8 +8,6 @@ import (
 	"testing"
 )
 
-type CatalogHandlerOption func(c *CatalogHandler)
-
 func TestGetCatalogRootDirectories(t *testing.T) {
 	handler := &CatalogHandler{}
 	response, err := send(handler, "/api/v1/catalog", http.MethodGet, nil)
@@ -108,7 +106,7 @@ func TestGetPageByID(t *testing.T) {
 func TestCatalogDownload(t *testing.T) {
 	fetchCatalogEntryByID := func(id string) (domain.CatalogEntry, error) {
 		assert.Equal(t, "id1", id)
-		return domain.CatalogEntry{Name: "South", Path: "../test/ebooks/epub/South.epub"}, nil
+		return domain.CatalogEntry{Name: "South", Path: "../test/books/ebooks/epub/South.epub"}, nil
 	}
 
 	handler := &CatalogHandler{FetchCatalogEntryByID: fetchCatalogEntryByID}

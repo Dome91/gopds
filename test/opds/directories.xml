@@ -1,0 +1,12 @@
+<feed>
+    <id>GOPDS</id>
+    <title>Catalog Directories</title>
+    <entry>
+        <id>id1</id>
+        <title>dir1</title>
+        <link href="/opds/id1" rel="http://opds-spec.org/crawlable"
+              type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+    </entry>
+    <link href="/opds/directories" rel="self" type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+    <link href="/opds" rel="start" type="application/atom+xml;profile=opds-catalog;kind=acquisition"/>
+</feed>

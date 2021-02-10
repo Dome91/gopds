@@ -18,7 +18,7 @@ import (
 
 func TestGenerateCoverForCBZ(t *testing.T) {
 	withMock(t, func(controller *gomock.Controller) {
-		entry := domain.CatalogEntry{ID: "id1", Name: "comic1.cbz", Path: "../test/comics/cbz/comic1.cbz", Type: domain.CBZ}
+		entry := domain.CatalogEntry{ID: "id1", Name: "comic1.cbz", Path: "../test/books/comics/cbz/comic1.cbz", Type: domain.CBZ}
 		var generatedCover string
 
 		repository := mock_domain.NewMockCatalogRepository(controller)
