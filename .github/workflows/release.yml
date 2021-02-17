@@ -38,7 +38,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: public
-          path: public
+          path: public/
 
   build-app:
     name: Build App
