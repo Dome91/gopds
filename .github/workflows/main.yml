@@ -101,5 +101,3 @@ jobs:
           name: gopds-${{ matrix.platform }}
           path: |
             gopds-${{ matrix.platform }}
-            migrations
-            public

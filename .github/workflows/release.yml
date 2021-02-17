@@ -91,8 +91,6 @@ jobs:
           name: gopds-${{ matrix.platform }}
           path: |
             gopds-${{ matrix.platform }}
-            migrations
-            public
 
   create-release:
     name: Create Release
@@ -123,15 +121,12 @@ jobs:
         with:
           name: ${{ matrix.asset }}
 
-      - name: Bundle assets
-        run: zip -r ${{matrix.asset}}.zip ${{matrix.asset}} public migrations
-
       - name: Upload
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: ./${{matrix.asset}}.zip
-          asset_name: ${{matrix.asset}}.zip
-          asset_content_type: application/zip
+          asset_path: ./${{matrix.asset}}
+          asset_name: ${{matrix.asset}}
+          asset_content_type: application/octet-stream
