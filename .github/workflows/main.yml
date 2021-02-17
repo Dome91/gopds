@@ -38,7 +38,7 @@ jobs:
         run: cd ui && npm run test -- --watch=false --browsers=ChromeHeadless
 
       - name: Build
-        run: cd ui && npm run build -- --prod --output-path=../public
+        run: cd ui && npm run build -- --prod --delete-output-path=false --output-path=../public
 
       - name: Upload UI artifacts
         uses: actions/upload-artifact@v2

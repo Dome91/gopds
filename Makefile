@@ -9,8 +9,13 @@ test-ui:
 
 build-ui:
 	mkdir -p public
-	rm -rf public/*
-	cd ui && npm install && npm run build -- --prod --output-path=../public
+	rm -rf public/assets
+	rm -rf public/*.txt
+	rm -rf public/*.ico
+	rm -rf public/*.html
+	rm -rf public/*.js
+	rm -rf public/*.css
+	cd ui && npm install && npm run build -- --prod  --delete-output-path=false --output-path=../public
 
 test:
 	go test ./...

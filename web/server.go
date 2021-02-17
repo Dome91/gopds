@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	log "github.com/sirupsen/logrus"
 	"gopds/configuration"
+	"gopds/public"
 	"net/http"
 	"os"
 	"os/signal"
@@ -61,7 +62,7 @@ func serveCovers(app *fiber.App) {
 
 func serveUI(app *fiber.App) {
 	app.Use("/*", filesystem.New(filesystem.Config{
-		Root:         http.Dir("public"),
+		Root:         http.FS(public.FS),
 		NotFoundFile: "index.html",
 	}))
 }

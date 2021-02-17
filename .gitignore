@@ -2,6 +2,11 @@ gopds
 gopds.db
 gopds.iml
 .idea
-public
+public/assets
+public/3rdpartylicenses.txt
+public/favicon.ico
+public/index.html
+public/*.js
+public/*.css
 data
 mock/
