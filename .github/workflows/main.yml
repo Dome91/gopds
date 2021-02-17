@@ -52,7 +52,7 @@ jobs:
     needs: [ test-and-build-ui ]
     strategy:
       matrix:
-        go-version: [ 1.15.x ]
+        go-version: [ 1.16.x ]
         platform: [ linux-armv6, linux-amd64 ]
     steps:
       - uses: actions/checkout@v1
