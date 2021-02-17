@@ -2,23 +2,20 @@ package database
 
 import (
 	"database/sql"
+	"embed"
 	"github.com/lopezator/migrator"
 	_ "github.com/mattn/go-sqlite3"
-	"io/ioutil"
 	"path/filepath"
 )
 
-var (
-	v1 = migration{"V1__init"}
-)
+//go:embed migrations
+var migrationFS embed.FS
 
-type migration struct {
-	Name  string
-}
+var migrationNames = []string{"V1__init"}
 
-func readSQL(path string, m migration) string {
-	filename := m.Name + ".sql"
-	file, err := ioutil.ReadFile(filepath.Join(path, filename))
+func readSQL(name string) string {
+	filename := name + ".sql"
+	file, err := migrationFS.ReadFile(filepath.Join("migrations", filename))
 	if err != nil {
 		panic(err)
 	}
@@ -26,19 +23,19 @@ func readSQL(path string, m migration) string {
 	return string(file)
 }
 
-func Migrate(db *sql.DB, path string) {
+func Migrate(db *sql.DB) {
+	var migrations []interface{}
+	for _, name := range migrationNames {
+		migrations = append(migrations, &migrator.Migration{
+			Name: name,
+			Func: func(tx *sql.Tx) error {
+				_, err := tx.Exec(readSQL(name))
+				return err
+			}})
+	}
+
 	m, err := migrator.New(
-		migrator.Migrations(
-			&migrator.Migration{
-				Name: v1.Name,
-				Func: func(tx *sql.Tx) error {
-					if _, err := tx.Exec(readSQL(path, v1)); err != nil {
-						return err
-					}
-					return nil
-				},
-			},
-		),
+		migrator.Migrations(migrations...),
 	)
 
 	if err != nil {

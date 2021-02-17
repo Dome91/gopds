@@ -43,6 +43,6 @@ func parseResponse(t *testing.T, response *http.Response, body interface{}) {
 
 func withDB(f func(db *database.DB)) {
 	db := database.New(":memory:")
-	database.Migrate(db.DB.DB, "../migrations")
+	database.Migrate(db.DB.DB)
 	f(db)
 }

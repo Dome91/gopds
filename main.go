@@ -22,7 +22,7 @@ func main() {
 	db := database.New(configuration.GetDatabasePath())
 	defer db.Close()
 
-	database.Migrate(db.DB.DB, configuration.GetMigrationsPath())
+	database.Migrate(db.DB.DB)
 	userRepository := database.NewUserRepository(db)
 	sourceRepository := database.NewSourceRepository(db)
 	catalogRepository := database.NewCatalogRepository(db, util.NewUUIDGenerator())
