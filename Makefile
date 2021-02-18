@@ -1,21 +1,24 @@
 BUILD_FLAGS=-ldflags="-extldflags=-static" -tags sqlite_omit_load_extension,osusergo,netgo
 
-all: clean build-ui build
-with-tests: clean test-ui build-ui test build
-only-tests: clean test-ui test
+all: clean install-dependencies build-ui build
+with-tests: clean install-dependencies test-ui build-ui test build
+only-tests: clean install-dependencies test-ui test
+
+install-dependencies:
+	go mod download
+	cd ui && npm install
 
 test-ui:
-	cd ui && npm install && npm run test -- --watch=false --browsers=ChromeHeadless
+	cd ui && npm run test -- --watch=false --browsers=ChromeHeadless
 
 build-ui:
-	mkdir -p public
 	rm -rf public/assets
-	rm -rf public/*.txt
-	rm -rf public/*.ico
-	rm -rf public/*.html
-	rm -rf public/*.js
-	rm -rf public/*.css
-	cd ui && npm install && npm run build -- --prod  --delete-output-path=false --output-path=../public
+	rm -f public/*.txt
+	rm -f public/*.ico
+	rm -f public/*.html
+	rm -f public/*.js
+	rm -f public/*.css
+	cd ui && npm run build -- --prod  --delete-output-path=false --output-path=../public
 
 test:
 	go test ./...

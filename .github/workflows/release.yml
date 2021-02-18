@@ -32,7 +32,7 @@ jobs:
         run: cd ui && npm install
 
       - name: Build
-        run: cd ui && npm run build -- --prod --delete-output-path=false --output-path=../public
+        run: make build-ui
 
       - name: Upload UI artifacts
         uses: actions/upload-artifact@v2
@@ -67,6 +67,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: public
+          path: public/
 
       - name: Install dependencies
         if: steps.cache-go.outputs.cache-hit != 'true'
