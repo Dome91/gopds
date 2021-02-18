@@ -15,7 +15,7 @@ require (
 	github.com/mustafaturan/bus v1.0.2
 	github.com/mustafaturan/monoton v1.0.0
 	github.com/sethvargo/go-password v0.2.0
-	github.com/sirupsen/logrus v1.7.1
+	github.com/sirupsen/logrus v1.8.0
 	github.com/spf13/afero v1.5.1
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
